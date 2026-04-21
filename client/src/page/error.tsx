@@ -1,11 +1,10 @@
-import { useTranslation } from 'react-i18next'
 import { Button } from '../components/button'
 import { Helmet } from 'react-helmet'
 import { useSiteConfig } from "../hooks/useSiteConfig";
 import { siteName } from '../utils/constants'
+import { t } from '../i18n'
 
 export function ErrorPage({error}: {error?: string}) {
-    const { t } = useTranslation()
     const siteConfig = useSiteConfig();
     return (
         <>

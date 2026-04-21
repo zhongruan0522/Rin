@@ -1,11 +1,11 @@
 import { useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
 import ReactLoading from "react-loading";
 import {
   DEFAULT_IMAGE_MAX_FILE_SIZE,
   isImageFile,
   uploadImageFile,
 } from "../utils/image-upload";
+import { t } from "../i18n";
 
 type ImageUploadInputProps = {
   value: string;
@@ -26,7 +26,6 @@ export function ImageUploadInput({
   shape = "rounded",
   maxFileSize = DEFAULT_IMAGE_MAX_FILE_SIZE,
 }: ImageUploadInputProps) {
-  const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [dragging, setDragging] = useState(false);

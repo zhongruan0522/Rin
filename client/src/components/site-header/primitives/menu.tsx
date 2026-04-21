@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Popup from "reactjs-popup";
 import { useLocation } from "wouter";
 import type { Profile } from "../../../state/profile";
-import { LanguageSwitch, SearchButton, UserAvatar } from "./action-buttons";
+import { SearchButton, UserAvatar } from "./action-buttons";
 import { NavBar } from "./nav-bar";
 
 export function Menu({ profile }: { profile?: Profile | null }) {
@@ -58,7 +58,6 @@ export function Menu({ profile }: { profile?: Profile | null }) {
         <div className={`mt-4 flex w-[50vw] flex-col rounded-2xl border border-black/10 bg-white p-2 shadow-lg shadow-black/5 dark:border-white/10 dark:bg-dark dark:shadow-black/20`}>
           <div className="flex flex-row justify-end space-x-2">
             <SearchButton onClose={onClose} />
-            <LanguageSwitch />
             <UserAvatar profile={profile} />
           </div>
           <NavBar menu={true} onClick={onClose} />

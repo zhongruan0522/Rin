@@ -1,7 +1,7 @@
 import type { Feed } from "@rin/api";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Helmet } from "react-helmet";
-import { useTranslation } from "react-i18next";
+import { t } from "../i18n";
 import ReactModal from "react-modal";
 import Popup from "reactjs-popup";
 import { Link, useLocation } from "wouter";
@@ -31,7 +31,7 @@ function extractFirstMarkdownImageUrl(content: string) {
 }
 
 export function FeedPage({ id, TOC, clean }: { id: string, TOC: () => JSX.Element, clean: (id: string) => void }) {
-  const { t } = useTranslation();
+
   const siteConfig = useSiteConfig();
   const profile = useContext(ProfileContext);
   const [feed, setFeed] = useState<Feed>();
@@ -347,7 +347,7 @@ function CommentInput({
   id: string;
   onRefresh: () => void;
 }) {
-  const { t } = useTranslation();
+
   const [content, setContent] = useState("");
   const [error, setError] = useState("");
   const { showAlert, AlertUI } = useAlert();
@@ -430,7 +430,7 @@ function Comments({ id }: { id: string }) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [error, setError] = useState<string>();
   const ref = useRef("");
-  const { t } = useTranslation();
+
 
   function loadComments() {
     client.comment
@@ -492,7 +492,7 @@ function CommentItem({
 }) {
   const { showConfirm, ConfirmUI } = useConfirm();
   const { showAlert, AlertUI } = useAlert();
-  const { t } = useTranslation();
+
   const profile = useContext(ProfileContext);
   function deleteComment() {
     showConfirm(

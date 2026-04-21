@@ -3,19 +3,17 @@ import type { ConfigHealthItem } from "../api/client";
 import { client } from "../app/runtime";
 import { useEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
-import { useTranslation } from "react-i18next";
 import ReactLoading from "react-loading";
 import { useSiteConfig } from "../hooks/useSiteConfig";
+import { t } from "../i18n";
 
 function renderHealthText(
-  t: ReturnType<typeof useTranslation>["t"],
   text: ConfigHealthItem["title"],
 ) {
   return t(text.key, text.values);
 }
 
 function HealthCard({ item }: { item: ConfigHealthItem }) {
-  const { t } = useTranslation();
   const tone = item.status;
   const badgeTone = item.status === "success" ? "success" : item.status === "warning" ? "warning" : "neutral";
   const badgeLabel =
@@ -28,18 +26,18 @@ function HealthCard({ item }: { item: ConfigHealthItem }) {
   return (
     <SettingsCard tone={tone}>
       <SettingsCardHeader
-        title={renderHealthText(t, item.title)}
-        description={renderHealthText(t, item.summary)}
+        title={renderHealthText(item.title)}
+        description={renderHealthText(item.summary)}
         badge={<SettingsBadge tone={badgeTone}>{badgeLabel}</SettingsBadge>}
       />
       <SettingsCardBody>
         <div className="space-y-3 text-sm text-neutral-600 dark:text-neutral-300">
-          <p>{renderHealthText(t, item.impact)}</p>
-          {item.suggestion ? <p className="text-neutral-500 dark:text-neutral-400">{renderHealthText(t, item.suggestion)}</p> : null}
+          <p>{renderHealthText(item.impact)}</p>
+          {item.suggestion ? <p className="text-neutral-500 dark:text-neutral-400">{renderHealthText(item.suggestion)}</p> : null}
           {item.details?.length ? (
             <ul className="space-y-1 text-xs text-neutral-500 dark:text-neutral-400">
               {item.details.map((detail) => (
-                <li key={`${detail.key}-${JSON.stringify(detail.values ?? {})}`}>{renderHealthText(t, detail)}</li>
+                <li key={`${detail.key}-${JSON.stringify(detail.values ?? {})}`}>{renderHealthText(detail)}</li>
               ))}
             </ul>
           ) : null}
@@ -50,7 +48,6 @@ function HealthCard({ item }: { item: ConfigHealthItem }) {
 }
 
 export function HealthPage() {
-  const { t } = useTranslation();
   const siteConfig = useSiteConfig();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

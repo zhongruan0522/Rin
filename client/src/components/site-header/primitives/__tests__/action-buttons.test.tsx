@@ -6,12 +6,6 @@ import { ClientConfigContext, defaultClientConfig } from "../../../../state/conf
 import type { Profile } from "../../../../state/profile";
 import { UserAvatar } from "../action-buttons";
 
-vi.mock("react-i18next", () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-  }),
-}));
-
 vi.mock("wouter", () => ({
   useLocation: () => ["/", vi.fn()],
 }));
@@ -74,6 +68,6 @@ describe("UserAvatar", () => {
       },
     });
 
-    expect(within(container).getByRole("button", { name: "profile.title" })).toBeInTheDocument();
+    expect(within(container).getByRole("button", { name: "个人资料" })).toBeInTheDocument();
   });
 });

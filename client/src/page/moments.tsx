@@ -4,7 +4,6 @@ import { client } from "../app/runtime"
 
 import { useSiteConfig } from "../hooks/useSiteConfig";
 import { siteName } from "../utils/constants"
-import { useTranslation } from "react-i18next"
 import { ProfileContext } from "../state/profile"
 import { tryInt } from "../utils/int"
 import { useSearch } from "wouter"
@@ -13,6 +12,7 @@ import Modal from "react-modal"
 import { MarkdownEditor } from "../components/markdown_editor"
 import { Waiting } from "../components/loading"
 import { MomentItem } from "../components/moment_item"
+import { t } from "../i18n"
 
 interface Moment {
     id: number;
@@ -35,7 +35,6 @@ export function MomentsPage() {
     const [editingMoment, setEditingMoment] = useState<Moment | null>(null)
     const query = new URLSearchParams(useSearch());
     const ref = useRef("")
-    const { t } = useTranslation()
     const siteConfig = useSiteConfig();
     const profile = useContext(ProfileContext);
     const { showAlert, AlertUI } = useAlert()

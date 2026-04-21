@@ -1,8 +1,6 @@
-import i18n from 'i18next';
 import _ from 'lodash';
 import {useCallback, useEffect, useState} from "react";
 import {Helmet} from "react-helmet";
-import {useTranslation} from "react-i18next";
 import Loading from 'react-loading';
 import {ShowAlertType, useAlert} from '../components/dialog';
 import {Checkbox, Input} from "../components/input";
@@ -13,6 +11,7 @@ import {useSiteConfig} from "../hooks/useSiteConfig";
 import {siteName} from "../utils/constants";
 import mermaid from 'mermaid';
 import { MarkdownEditor } from '../components/markdown_editor';
+import { t } from '../i18n';
 
 async function publish({
   title,
@@ -37,7 +36,6 @@ async function publish({
   onCompleted?: () => void;
   showAlert: ShowAlertType;
 }) {
-  const t = i18n.t
   const { data, error } = await client.feed.create(
     {
       title,
@@ -89,7 +87,6 @@ async function update({
   onCompleted?: () => void;
   showAlert: ShowAlertType;
 }) {
-  const t = i18n.t
   const { error } = await client.feed.update(
     id,
     {
@@ -118,7 +115,6 @@ async function update({
 
 // 写作页面
 export function WritingPage({ id }: { id?: number }) {
-  const { t } = useTranslation();
   const siteConfig = useSiteConfig();
   const cache = Cache.with(id);
   const [title, setTitle] = cache.useCache("title", "");

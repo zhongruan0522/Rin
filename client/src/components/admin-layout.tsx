@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
-import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "wouter";
 import { useSiteConfig } from "../hooks/useSiteConfig";
+import { t } from "../i18n";
 
 function AdminNavItem({
   href,
@@ -39,7 +39,6 @@ export function AdminLayout({
   description: string;
   children: ReactNode;
 }) {
-  const { t } = useTranslation();
   const siteConfig = useSiteConfig();
 
   return (

@@ -1,6 +1,5 @@
 import * as Switch from "@radix-ui/react-switch";
 import { type ChangeEvent, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
 import ReactLoading from "react-loading";
 import { Button } from "../components/button";
 import { useConfirm } from "../components/dialog";
@@ -12,6 +11,7 @@ import {
   SettingsCardRow,
   SettingsSectionTitle,
 } from "@rin/ui";
+import { t } from "../i18n";
 
 export function ItemTitle({ title }: { title: string }) {
   return <SettingsSectionTitle title={title} />;
@@ -155,7 +155,6 @@ export function ItemWithUpload({
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
-  const { t } = useTranslation();
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     setLoading(true);

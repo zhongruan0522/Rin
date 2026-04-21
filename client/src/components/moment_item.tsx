@@ -1,6 +1,6 @@
-import { useTranslation } from "react-i18next";
 import { Markdown } from "./markdown";
 import { timeago } from "../utils/timeago";
+import { t } from "../i18n";
 
 interface Moment {
     id: number;
@@ -25,7 +25,6 @@ export function MomentItem({
     onEdit: (moment: Moment) => void,
     canManage: boolean
 }) {
-    const { t } = useTranslation()
     const { createdAt, updatedAt } = moment;
     
     return (

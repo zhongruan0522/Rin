@@ -1,16 +1,15 @@
 import { SettingsBadge, SettingsCard, SettingsCardBody, SettingsCardHeader } from "@rin/ui";
 import { useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
-import { useTranslation } from "react-i18next";
 import ReactLoading from "react-loading";
 import { client } from "../app/runtime";
 import { Button } from "../components/button";
 import { useAlert } from "../components/dialog";
 import { useSiteConfig } from "../hooks/useSiteConfig";
 import { enrichMarkdownImageMetadata } from "../utils/image-upload";
+import { t } from "../i18n";
 
 export function CompatTasksPage() {
-  const { t } = useTranslation();
   const siteConfig = useSiteConfig();
   const [loading, setLoading] = useState(true);
   const [generatedAt, setGeneratedAt] = useState("");

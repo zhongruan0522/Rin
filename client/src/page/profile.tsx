@@ -1,4 +1,3 @@
-import { t } from "i18next";
 import { useContext, useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { ButtonWithLoading } from "../components/button";
@@ -6,6 +5,7 @@ import { client } from "../app/runtime";
 import { ImageUploadInput } from "../components/image-upload-input";
 import { Input } from "../components/input";
 import { ProfileContext } from "../state/profile";
+import { t } from "../i18n";
 
 
 export function ProfilePage() {

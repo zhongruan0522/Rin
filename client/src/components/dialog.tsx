@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 import Modal from "react-modal";
 import { Button, ButtonWithLoading } from "./button";
+import { t } from "../i18n";
 
 export type Confirm = {
     title: string;
@@ -31,7 +31,6 @@ export function useAlert() {
         })
         setIsOpen(true)
     }
-    const { t } = useTranslation()
     const AlertUI = () => (
         <Modal isOpen={isOpen}
             shouldCloseOnOverlayClick={true}
@@ -93,7 +92,6 @@ export function useConfirm() {
         })
         setIsOpen(true)
     }
-    const { t } = useTranslation()
     const ConfirmUI = () => (
         <Modal isOpen={isOpen}
             shouldCloseOnOverlayClick={true}

@@ -1,4 +1,3 @@
-import { t } from "i18next";
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { ButtonWithLoading } from "../components/button";
@@ -7,6 +6,7 @@ import { Input } from "../components/input";
 import { client, oauth_url } from "../app/runtime";
 import { setAuthToken } from "../utils/auth";
 import { getLoginRedirectPath } from "../utils/auth-redirect";
+import { t } from "../i18n";
 
 export function LoginPage() {
     const [username, setUsername] = useState('')

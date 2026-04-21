@@ -28,11 +28,9 @@ import { TimelinePage } from "../page/timeline";
 import { WritingPage } from "../page/writing";
 import { ProfileContext } from "../state/profile";
 import { tryInt } from "../utils/int";
-import { useTranslation } from "react-i18next";
+import { t } from "../i18n";
 
 export function AppRoutes() {
-  const { t } = useTranslation();
-
   return (
     <Switch>
       <AppRoute path="/">
@@ -143,7 +141,6 @@ function AppRoute({
 }) {
   const profile = useContext(ProfileContext);
   const siteConfig = useSiteConfig();
-  const { t } = useTranslation();
 
   const content =
     requirePermission && !profile?.permission ? <ErrorPage error={t("error.permission_denied")} /> : children;
@@ -179,7 +176,6 @@ function AdminRoute({
   description: string;
 }) {
   const profile = useContext(ProfileContext);
-  const { t } = useTranslation();
   const content =
     requirePermission && !profile?.permission ? <ErrorPage error={t("error.permission_denied")} /> : children;
 

@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import { client } from "../app/runtime";
 import {timeago} from "../utils/timeago.ts";
 import {Link} from "wouter";
-import {useTranslation} from "react-i18next";
+import {t} from "../i18n";
 
 export function AdjacentSection({id, setError}: { id: string, setError: (error: string) => void }) {
     const [adjacentFeeds, setAdjacentFeeds] = useState<AdjacentFeedResponse>();
@@ -30,7 +30,6 @@ export function AdjacentSection({id, setError}: { id: string, setError: (error: 
 export function AdjacentCard({data, type}: { data: AdjacentFeed | null | undefined, type: "previous" | "next" }) {
     const direction = type === "previous" ? "text-start" : "text-end"
     const radius = type === "previous" ? "rounded-t-2xl sm:rounded-none sm:rounded-l-2xl" : "rounded-b-2xl sm:rounded-none sm:rounded-r-2xl"
-    const {t} = useTranslation()
     if (!data) {
         return (<div className="w-full p-6 duration-300">
             <p className={`t-secondary w-full ${direction}`}>

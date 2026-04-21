@@ -1,4 +1,4 @@
-export { HeaderActions, LanguageSwitch, SearchButton, UserAvatar } from "./primitives/action-buttons";
+export { HeaderActions, SearchButton, UserAvatar } from "./primitives/action-buttons";
 export { BrandLink } from "./primitives/brand-link";
 export { Menu } from "./primitives/menu";
 export { MobileTopHeader } from "./primitives/mobile-top-header";

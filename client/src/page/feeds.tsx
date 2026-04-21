@@ -9,7 +9,7 @@ import { ProfileContext } from "../state/profile"
 import { useSiteConfig } from "../hooks/useSiteConfig";
 import { siteName } from "../utils/constants"
 import { tryInt } from "../utils/int"
-import { useTranslation } from "react-i18next";
+import { t } from "../i18n";
 
 type FeedsData = {
     size: number,
@@ -24,7 +24,6 @@ type FeedsMap = {
 }
 
 export function FeedsPage() {
-    const { t } = useTranslation()
     const siteConfig = useSiteConfig();
     const query = new URLSearchParams(useSearch());
     const profile = useContext(ProfileContext);

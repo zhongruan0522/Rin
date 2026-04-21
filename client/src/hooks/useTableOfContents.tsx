@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { t } from '../i18n'
 
 export interface TableOfContent {
     index: number
@@ -20,7 +20,6 @@ const useTableOfContents = (selector: string) => {
     const intersectingListRef = useRef<boolean[]>([]) // isIntersecting array
     const [tableOfContents, setTableOfContents] = useState<TableOfContent[]>([])
     const [activeIndex, setActiveIndex] = useState(0)
-    const { t } = useTranslation()
     const io = useRef<IntersectionObserver | null>(null);
     const [ref, setRef] = useState("-1")
     const lastRef = useRef("")

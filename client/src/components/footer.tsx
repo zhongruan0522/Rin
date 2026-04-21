@@ -4,12 +4,11 @@ import { useLocation } from 'wouter';
 import { ClientConfigContext } from '../state/config';
 import { Helmet } from "react-helmet";
 import { siteName } from '../utils/constants';
-import { useTranslation } from "react-i18next";
+import { t } from "../i18n";
 import { buildLoginPath, HIDDEN_LOGIN_REDIRECT } from "../utils/auth-redirect";
 
 type ThemeMode = 'light' | 'dark' | 'system';
 function Footer() {
-    const { t } = useTranslation()
     const [, setLocation] = useLocation()
     const [modeState, setModeState] = useState<ThemeMode>('system');
     const config = useContext(ClientConfigContext);

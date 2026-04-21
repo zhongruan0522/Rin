@@ -1,7 +1,7 @@
 import { SearchableSelect, SettingsBadge, SettingsCard, SettingsCardBody, SettingsCardHeader, SettingsCardRow } from "@rin/ui";
 import { type ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet";
-import { useTranslation } from "react-i18next";
+import { t } from "../i18n";
 import ReactLoading from "react-loading";
 import Modal from "react-modal";
 import { client, oauth_url } from "../app/runtime";
@@ -48,7 +48,6 @@ const THEME_COLOR_OPTIONS = [
 ];
 
 export function Settings() {
-  const { t } = useTranslation();
   const siteConfig = useSiteConfig();
   const [isOpen, setIsOpen] = useState(false);
   const [msg, setMsg] = useState("");
@@ -88,7 +87,7 @@ export function Settings() {
     return () => {
       applyThemeColor(getDraftThemeColor(initialDraftRef.current));
     };
-  }, [showAlert, t]);
+  }, [showAlert]);
 
   const { clientConfig, serverConfig } = useMemo(() => createSettingsConfigWrappers(draft), [draft]);
   const hasUnsavedChanges = !areSettingsDraftsEqual(draft, initialDraft);
@@ -128,7 +127,7 @@ export function Settings() {
   async function handleFaviconChange(e: ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (file) {
-      await uploadFavicon(file, t, showAlert);
+      await uploadFavicon(file, showAlert);
     }
   }
 

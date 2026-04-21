@@ -1,13 +1,13 @@
 import Editor from '@monaco-editor/react';
 import { editor } from 'monaco-editor';
 import React, { useRef, useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
 import Loading from 'react-loading';
 import { FlatInset, FlatTabButton } from "@rin/ui";
 import { useAlert } from "./dialog";
 import { useColorMode } from "../utils/darkModeUtils";
 import { buildMarkdownImage, uploadImageFile } from "../utils/image-upload";
 import { Markdown } from "./markdown";
+import { t } from "../i18n";
 
 
 interface MarkdownEditorProps {
@@ -18,7 +18,6 @@ interface MarkdownEditorProps {
 }
 
 export function MarkdownEditor({ content, setContent, placeholder = "> Write your content here...", height = "400px" }: MarkdownEditorProps) {
-  const { t } = useTranslation();
   const colorMode = useColorMode();
   const editorRef = useRef<editor.IStandaloneCodeEditor>();
   const isComposingRef = useRef(false);

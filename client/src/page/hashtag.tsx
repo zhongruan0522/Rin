@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react"
 import { Helmet } from 'react-helmet'
-import { useTranslation } from "react-i18next"
 import { FeedCard } from "../components/feed_card"
 import { Waiting } from "../components/loading"
 import { client } from "../app/runtime"
 
 import { useSiteConfig } from "../hooks/useSiteConfig";
 import { siteName } from "../utils/constants"
+import { t } from "../i18n"
 
 
 type FeedsData = {
@@ -34,7 +34,6 @@ type FeedsData = {
 }
 
 export function HashtagPage({ name }: { name: string }) {
-    const { t } = useTranslation()
     const siteConfig = useSiteConfig();
     const [status, setStatus] = useState<'loading' | 'idle'>('idle')
     const [hashtag, setHashtag] = useState<FeedsData>()

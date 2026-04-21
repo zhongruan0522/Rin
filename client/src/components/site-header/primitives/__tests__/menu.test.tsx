@@ -4,15 +4,6 @@ import type { ReactNode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Menu } from "../menu";
 
-vi.mock("react-i18next", () => ({
-  useTranslation: () => ({
-    t: (key: string) => key,
-    i18n: {
-      changeLanguage: vi.fn(),
-    },
-  }),
-}));
-
 vi.mock("wouter", () => ({
   useLocation: () => ["/", vi.fn()],
 }));

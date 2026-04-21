@@ -1,8 +1,7 @@
-import { useTranslation } from "react-i18next";
 import { Button } from "./button";
+import { t } from "../i18n";
 
 export function Tips({ value, type = 'tips' }: { value: string, type?: 'note' | 'tips' | 'warn' | 'error' | 'info' | 'important' }) {
-    const { t } = useTranslation();
     let className = ""
     switch (type) {
         case 'note':
@@ -36,7 +35,6 @@ export function Tips({ value, type = 'tips' }: { value: string, type?: 'note' | 
 }
 
 export function TipsPage({ children }: { children: React.ReactNode }) {
-    const { t } = useTranslation();
     return (
         <div className="w-full flex flex-row justify-center ani-show">
             <div className="flex flex-col wauto rounded-2xl bg-w m-2 p-6 items-center justify-center space-y-2">

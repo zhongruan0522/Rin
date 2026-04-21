@@ -1,5 +1,5 @@
-import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "wouter";
+import { t } from "../../../i18n";
 
 export function NavBar({
   menu,
@@ -11,7 +11,6 @@ export function NavBar({
   itemClassName?: string;
 }) {
   const [location] = useLocation();
-  const { t } = useTranslation();
 
   return (
     <>

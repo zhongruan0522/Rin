@@ -1,7 +1,5 @@
-import i18next from "i18next";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Helmet } from 'react-helmet';
-import { useTranslation } from "react-i18next";
 import Modal from 'react-modal';
 import { FlatActionButton, FlatPanel, SearchableSelect } from "@rin/ui";
 import { ShowAlertType, useAlert, useConfirm } from "../components/dialog";
@@ -13,6 +11,7 @@ import { ProfileContext } from "../state/profile";
 
 import { useSiteConfig } from "../hooks/useSiteConfig";
 import { siteName } from "../utils/constants";
+import { t } from "../i18n";
 
 
 type FriendItem = {
@@ -30,7 +29,6 @@ type FriendItem = {
 };
 
 async function publish({ name, avatar, desc, url, showAlert }: { name: string, avatar: string, desc: string, url: string, showAlert: ShowAlertType }) {
-    const t = i18next.t
     const { error } = await client.friend.create({
         avatar,
         name,
@@ -47,7 +45,6 @@ async function publish({ name, avatar, desc, url, showAlert }: { name: string, a
 }
 
 export function FriendsPage() {
-    const { t } = useTranslation()
     const siteConfig = useSiteConfig();
     const config = useContext(ClientConfigContext)
     let [apply] = useState<FriendItem>()
@@ -144,7 +141,6 @@ function FriendList({ title, show, friends }: { title: string, show: boolean, fr
 }
 
 function Friend({ friend }: { friend: FriendItem }) {
-    const { t } = useTranslation()
     const profile = useContext(ProfileContext)
     const [avatar, setAvatar] = useState(friend.avatar)
     const [name, setName] = useState(friend.name)

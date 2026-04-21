@@ -5,7 +5,7 @@ import {Waiting} from "../components/loading"
 import { client } from "../app/runtime"
 import {useSiteConfig} from "../hooks/useSiteConfig";
 import {siteName} from "../utils/constants"
-import {useTranslation} from "react-i18next";
+import {t} from "../i18n";
 
 interface FeedItem {
     id: number;
@@ -17,7 +17,6 @@ export function TimelinePage() {
     const [feeds, setFeeds] = useState<Partial<Record<number, FeedItem[]>>>()
     const [length, setLength] = useState(0)
     const ref = useRef(false)
-    const { t } = useTranslation()
     const siteConfig = useSiteConfig();
     function fetchFeeds() {
         client.feed.timeline()

@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Helmet } from 'react-helmet';
-import { useTranslation } from "react-i18next";
 import { Link } from "wouter";
 import { HashTag } from "../components/hashtag";
 import { Waiting } from "../components/loading";
 import { client } from "../app/runtime";
 import { useSiteConfig } from "../hooks/useSiteConfig";
 import { siteName } from "../utils/constants";
+import { t } from "../i18n";
 
 type Hashtag = {
     id: number;
@@ -17,7 +17,6 @@ type Hashtag = {
 }
 
 export function HashtagsPage() {
-    const { t } = useTranslation();
     const siteConfig = useSiteConfig();
     const [hashtags, setHashtags] = useState<Hashtag[]>();
     const [sortBy, setSortBy] = useState<'latest' | 'popular'>('latest');

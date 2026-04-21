@@ -1,8 +1,8 @@
 import { ConfigWrapper } from "@rin/config";
-import type { TFunction } from "i18next";
 import { client, endpoint } from "../app/runtime";
 import { defaultClientConfig, defaultServerConfig } from "../state/config";
 import { headersWithAuth } from "../utils/auth";
+import { t } from "../i18n";
 
 export type ImportMessage = { title: string; reason: string };
 export type SettingsDraft = {
@@ -50,7 +50,7 @@ export function createSettingsConfigWrappers(draft: SettingsDraft) {
   };
 }
 
-export async function uploadFavicon(file: File, t: TFunction, showAlert: (message: string) => void) {
+export async function uploadFavicon(file: File, showAlert: (message: string) => void) {
   const maxFileSize = 10 * 1024 * 1024;
   if (file.size > maxFileSize) {
     showAlert(t("upload.failed$size", { size: maxFileSize / 1024 / 1024 }));
