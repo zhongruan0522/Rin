@@ -413,7 +413,8 @@ export function t(key: string, params?: Params): string {
   let value = strings[key] ?? key;
   if (params) {
     for (const [k, v] of Object.entries(params)) {
-      value = value.replace(`{{${k}}}`, String(v));
+      const escaped = String(v ?? "").replace(/\$/g, "$$$$");
+      value = value.split(`{{${k}}}`).join(escaped);
     }
   }
   return value;
