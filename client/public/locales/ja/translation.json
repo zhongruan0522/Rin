@@ -367,6 +367,11 @@
       "title": "RSS 購読リンク"
     },
     "title": "設定",
+    "save": {
+      "title": "未保存の変更"
+    },
+    "unsaved_changes": "保存されていない変更があります",
+    "save_success": "設定を保存しました",
     "update_failed$message": "更新に失敗しました: {{message}}",
     "wordpress": {
       "desc": "WordPressからエクスポートされたXMLファイルをアップロードする",

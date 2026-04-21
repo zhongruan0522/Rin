@@ -376,6 +376,11 @@
       "title": "RSS 訂閱連結"
     },
     "title": "設定",
+    "save": {
+      "title": "未儲存的變更"
+    },
+    "unsaved_changes": "您有未儲存的變更",
+    "save_success": "設定儲存成功",
     "update_failed$message": "更新失敗: {{message}}",
     "wordpress": {
       "desc": "上傳 WordPress 匯出的 XML 文件",

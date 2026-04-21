@@ -377,6 +377,11 @@
       "title": "RSS Subscription Link"
     },
     "title": "Settings",
+    "save": {
+      "title": "Unsaved changes"
+    },
+    "unsaved_changes": "You have unsaved changes",
+    "save_success": "Settings saved successfully",
     "update_failed$message": "Update failed: {{message}}",
     "wordpress": {
       "desc": "Upload the XML file exported from WordPress",

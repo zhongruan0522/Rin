@@ -97,18 +97,6 @@ export const momentUpdateSchema = t.Object({
 });
 
 // ============================================================================
-// AI Config Schemas
-// ============================================================================
-
-export const aiConfigUpdateSchema = t.Object({
-  enabled: t.Boolean({ optional: true }),
-  provider: t.String({ optional: true }),
-  model: t.String({ optional: true }),
-  api_key: t.String({ optional: true }),
-  api_url: t.String({ optional: true }),
-});
-
-// ============================================================================
 // WordPress Import Schemas
 // ============================================================================
 

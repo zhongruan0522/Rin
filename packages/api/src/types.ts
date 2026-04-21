@@ -323,12 +323,6 @@ export const API_PATHS = {
   CONFIG_UPDATE: (type: ConfigType) => `/config/${type}`,
   CONFIG_CLEAR_CACHE: '/config/cache',
 
-  // AI Config (deprecated - use CONFIG_GET/CONFIG_UPDATE with 'server' type instead)
-  /** @deprecated Use CONFIG_GET('server') instead. AI config is now part of server config. */
-  AI_CONFIG_GET: '/ai-config',
-  /** @deprecated Use CONFIG_UPDATE('server', {...}) instead. AI config is now part of server config. */
-  AI_CONFIG_UPDATE: '/ai-config',
-
   // Storage
   STORAGE_UPLOAD: '/storage',
 
