@@ -5,9 +5,8 @@
   },
   "admin": {
     "back_to_site": "返回站點",
-    "compat_tasks_description": "批次觸發向前相容任務，用於補齊歷史文章缺失的 AI 摘要與圖片 blurhash 中繼資料。",
+    "compat_tasks_description": "批次觸發向前相容任務，用於補齊歷史文章缺失的圖片 blurhash 中繼資料。",
     "health_description": "檢查關鍵配置、缺失的整合項，以及可能影響服務正常運行的風險。",
-    "queue_status_description": "查看 AI 摘要佇列進度、最近任務結果與失敗資訊。",
     "settings_description": "在統一的後台空間中管理站點行為、整合配置與發佈規則。",
     "title": "後台管理",
     "writing_description": "在獨立的管理工作區中編寫、編輯並發佈內容。"
@@ -19,18 +18,6 @@
     "running": "執行中",
     "yes": "是",
     "no": "否",
-    "ai_summary": {
-      "title": "補齊 AI 摘要",
-      "description": "掃描歷史已發佈文章，為尚未生成摘要的內容重新入列。",
-      "eligible": "待處理 {{count}} 篇",
-      "force_eligible": "可強制重跑 {{count}} 篇",
-      "enabled": "AI 摘要已啟用：{{value}}",
-      "queue_configured": "佇列已設定：{{value}}",
-      "run": "開始補齊",
-      "run_force": "強制全部重跑",
-      "result": "AI 摘要任務已入列 {{queued}} 篇，略過 {{skipped}} 篇。",
-      "result_force": "已強制重跑入列 {{queued}} 篇 AI 摘要任務，略過 {{skipped}} 篇。"
-    },
     "blurhash": {
       "title": "補齊圖片 Blurhash",
       "description": "掃描歷史文章中的圖片，為缺失占位圖與尺寸中繼資料的圖片補齊 markdown fragment。",
@@ -40,23 +27,6 @@
       "progress": "已處理 {{processed}} / {{total}}，更新 {{updated}} 篇，失敗 {{failed}} 篇。",
       "result": "Blurhash 補齊完成：共掃描 {{total}} 篇，成功更新 {{updated}} 篇，失敗 {{failed}} 篇。"
     }
-  },
-  "ai_summary": {
-    "message": {
-      "completed": "AI 摘要已生成。",
-      "failed": "AI 摘要生成失敗。",
-      "idle": "AI 摘要任務目前未執行。",
-      "pending": "AI 摘要任務已進入佇列。",
-      "processing": "AI 摘要正在生成中。"
-    },
-    "status": {
-      "completed": "已完成",
-      "failed": "失敗",
-      "idle": "閒置",
-      "pending": "排隊中",
-      "processing": "生成中"
-    },
-    "title": "AI 總結"
   },
   "alert": "提示",
   "alias": "別名",
@@ -206,41 +176,6 @@
     "success": "發布成功",
     "title": "發布"
   },
-  "queue_status": {
-    "binding": "佇列綁定",
-    "configured": "已配置",
-    "empty_description": "目前沒有排隊中或最近處理過的 AI 摘要任務。",
-    "empty_title": "暫無佇列活動",
-    "delete": "刪除",
-    "delete_confirm_description": "確定刪除 Feed #{{id}} 的佇列任務記錄嗎？",
-    "delete_confirm_title": "刪除佇列任務記錄",
-    "delete_success": "佇列任務記錄已刪除",
-    "deleting": "刪除中",
-    "feed_id": "Feed #{{id}}",
-    "generated_at": "最近更新時間：{{date}}",
-    "load_failed": "佇列狀態載入失敗",
-    "loading": "正在載入佇列任務狀態...",
-    "not_configured": "未配置",
-    "status": {
-      "completed": "已完成",
-      "failed": "失敗",
-      "idle": "閒置",
-      "pending": "排隊中",
-      "processing": "處理中"
-    },
-    "summary": {
-      "completed": "已完成任務",
-      "failed": "失敗任務",
-      "pending": "排隊任務",
-      "processing": "處理中任務"
-    },
-    "retry": "重試",
-    "retry_success": "佇列任務已重新入列",
-    "retrying": "重試中",
-    "title": "佇列狀態",
-    "untitled": "未命名 Feed",
-    "updated_at": "更新時間：{{date}}"
-  },
   "reload": "重試",
   "reset": "重設",
   "save": "保存",
@@ -336,48 +271,6 @@
         }
       },
       "title": "友情連結設定"
-    },
-    "ai_summary": {
-      "title": "AI 總結設定",
-      "enable": {
-        "title": "啟用 AI 總結",
-        "desc": "發佈文章時自動產生 AI 總結"
-      },
-      "provider": {
-        "title": "AI 供應商",
-        "desc": "選擇或輸入 AI 服務供應商"
-      },
-      "model": {
-        "title": "模型",
-        "desc": "選擇或輸入模型名稱"
-      },
-      "api_key": {
-        "title": "API Key",
-        "desc": "輸入您的 API 金鑰",
-        "set": "已設定",
-        "placeholder_set": "輸入新金鑰以更新"
-      },
-      "api_url": {
-        "title": "API URL",
-        "desc": "自訂 API 地址（OpenAI 相容格式）"
-      },
-      "save": {
-        "title": "儲存設定",
-        "desc": "儲存 AI 設定到資料庫",
-        "button": "儲存設定"
-      },
-      "save_success": "儲存成功",
-      "unsaved_changes": "您有未儲存的變更",
-      "test": {
-        "title": "測試模型",
-        "desc": "測試 AI 模型是否可用",
-        "button": "測試連接",
-        "success": "測試成功",
-        "failed": "測試失敗",
-        "error": "測試出錯",
-        "testing": "正在測試...",
-        "http_error$status": "HTTP 錯誤 (狀態碼: {{status}})"
-      }
     },
     "get_config_failed$message": "獲取配置失敗，{{message}}",
     "import_failed$message": "匯入失敗，{{message}}",
@@ -618,47 +511,6 @@
         },
         "details": {
           "key": "{{key}}"
-        }
-      },
-      "ai_summary": {
-        "title": "AI 摘要",
-        "disabled": {
-          "impact": "文章發布時不會生成 AI 摘要。",
-          "summary": "AI 摘要已關閉。",
-          "suggestion": "如果你希望發布時自動生成摘要，請在設定中啟用。"
-        },
-        "no_model": {
-          "impact": "發布或更新內容時，摘要生成可能失敗。",
-          "summary": "AI 摘要已啟用，但未配置模型。",
-          "suggestion": "啟用 AI 摘要前，請先在設定中選擇模型。"
-        },
-        "worker_ai": {
-          "ready": {
-            "impact": "可以透過 Workers AI 生成 AI 摘要。",
-            "summary": "Workers AI 已為模型 {{model}} 配置完成。"
-          },
-          "missing": {
-            "impact": "發布內容時，AI 摘要請求會失敗。",
-            "summary": "AI 摘要使用了 worker-ai，但缺少 Workers AI binding。",
-            "suggestion": "在使用 worker-ai 提供方前，請先在 wrangler 設定中加入 AI binding。"
-          }
-        },
-        "external": {
-          "ready": {
-            "impact": "可以透過已配置的外部提供方生成 AI 摘要。",
-            "summary": "{{provider}} 已為 AI 摘要配置完成。",
-            "suggestion": "如果你想驗證遠端模型回應，可以在設定中使用測試功能。"
-          },
-          "missing": {
-            "impact": "發布內容時，AI 摘要請求會失敗。",
-            "summary_key": "缺少 AI 提供方金鑰。",
-            "summary_url": "缺少 AI 提供方 URL。",
-            "suggestion": "在啟用 AI 摘要前，請先在設定中配置提供方憑證。"
-          },
-          "details": {
-            "provider": "提供方：{{provider}}",
-            "model": "模型：{{model}}"
-          }
         }
       },
       "webhook": {

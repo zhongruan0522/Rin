@@ -22,7 +22,6 @@ import { HashtagsPage } from "../page/hashtags";
 import { LoginPage } from "../page/login";
 import { MomentsPage } from "../page/moments";
 import { ProfilePage } from "../page/profile";
-import { QueueStatusPage } from "../page/queue-status";
 import { SearchPage } from "../page/search";
 import { Settings } from "../page/settings";
 import { TimelinePage } from "../page/timeline";
@@ -70,10 +69,6 @@ export function AppRoutes() {
 
       <AdminRoute path="/admin/health" requirePermission title={t("health.title")} description={t("admin.health_description")}>
         <HealthPage />
-      </AdminRoute>
-
-      <AdminRoute path="/admin/queue-status" requirePermission title={t("queue_status.title")} description={t("admin.queue_status_description")}>
-        <QueueStatusPage />
       </AdminRoute>
 
       <AdminRoute path="/admin/compat-tasks" requirePermission title={t("compat_tasks.title")} description={t("admin.compat_tasks_description")}>

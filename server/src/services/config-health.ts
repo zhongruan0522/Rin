@@ -1,5 +1,4 @@
 import { WEBHOOK_URL_KEY } from "@rin/config";
-import { getAIConfig } from "../utils/db-config";
 
 type HealthStatus = "success" | "warning" | "danger";
 type HealthTextValues = Record<string, string | number | boolean>;
@@ -26,13 +25,6 @@ export interface HealthCheckResponse {
   items: HealthCheckItem[];
 }
 
-const AI_PROVIDER_DEFAULT_URLS: Record<string, string> = {
-  openai: "https://api.openai.com/v1",
-  claude: "https://api.anthropic.com/v1",
-  gemini: "https://generativelanguage.googleapis.com/v1beta/openai",
-  deepseek: "https://api.deepseek.com/v1",
-};
-
 function createItem(item: HealthCheckItem): HealthCheckItem {
   return item;
 }
@@ -53,7 +45,6 @@ export async function buildHealthCheckResponse(
     siteAvatar,
     webhookUrl,
     friendCrontab,
-    aiConfig,
   ] = await Promise.all([
     clientConfig.getOrDefault("login.enabled", true),
     clientConfig.getOrDefault("rss", false),
@@ -61,7 +52,6 @@ export async function buildHealthCheckResponse(
     clientConfig.get("site.avatar"),
     serverConfig.get(WEBHOOK_URL_KEY),
     serverConfig.getOrDefault("friend_crontab", true),
-    getAIConfig(serverConfig),
   ]);
 
   const items: HealthCheckItem[] = [];
@@ -215,91 +205,6 @@ export async function buildHealthCheckResponse(
         suggestion: text("health.items.storage.missing.suggestion"),
         details: missingStorageKeys.map((key) => text("health.items.storage.details.key", { key })),
       }),
-    );
-  }
-
-  if (!aiConfig.enabled) {
-    items.push(
-      createItem({
-        id: "ai-summary",
-        title: text("health.items.ai_summary.title"),
-        status: "warning",
-        configured: false,
-        impact: text("health.items.ai_summary.disabled.impact"),
-        summary: text("health.items.ai_summary.disabled.summary"),
-        suggestion: text("health.items.ai_summary.disabled.suggestion"),
-      }),
-    );
-  } else if (!aiConfig.model) {
-    items.push(
-      createItem({
-        id: "ai-summary",
-        title: text("health.items.ai_summary.title"),
-        status: "danger",
-        configured: false,
-        impact: text("health.items.ai_summary.no_model.impact"),
-        summary: text("health.items.ai_summary.no_model.summary"),
-        suggestion: text("health.items.ai_summary.no_model.suggestion"),
-      }),
-    );
-  } else if (aiConfig.provider === "worker-ai") {
-    const workerAiReady = Boolean(env.AI && typeof env.AI.run === "function");
-    items.push(
-      createItem(
-        workerAiReady
-          ? {
-              id: "ai-summary",
-              title: text("health.items.ai_summary.title"),
-              status: "success",
-              configured: true,
-              impact: text("health.items.ai_summary.worker_ai.ready.impact"),
-              summary: text("health.items.ai_summary.worker_ai.ready.summary", { model: aiConfig.model }),
-              suggestion: text("health.items.common.no_action"),
-            }
-          : {
-              id: "ai-summary",
-              title: text("health.items.ai_summary.title"),
-              status: "danger",
-              configured: false,
-              impact: text("health.items.ai_summary.worker_ai.missing.impact"),
-              summary: text("health.items.ai_summary.worker_ai.missing.summary"),
-              suggestion: text("health.items.ai_summary.worker_ai.missing.suggestion"),
-            },
-      ),
-    );
-  } else {
-    const hasApiKey = Boolean(aiConfig.api_key);
-    const hasApiUrl = Boolean(aiConfig.api_url || AI_PROVIDER_DEFAULT_URLS[aiConfig.provider]);
-    const aiDetails = [
-      text("health.items.ai_summary.external.details.provider", { provider: aiConfig.provider }),
-      text("health.items.ai_summary.external.details.model", { model: aiConfig.model }),
-    ];
-    items.push(
-      createItem(
-        hasApiKey && hasApiUrl
-          ? {
-              id: "ai-summary",
-              title: text("health.items.ai_summary.title"),
-              status: "success",
-              configured: true,
-              impact: text("health.items.ai_summary.external.ready.impact"),
-              summary: text("health.items.ai_summary.external.ready.summary", { provider: aiConfig.provider }),
-              suggestion: text("health.items.ai_summary.external.ready.suggestion"),
-              details: aiDetails,
-            }
-          : {
-              id: "ai-summary",
-              title: text("health.items.ai_summary.title"),
-              status: "danger",
-              configured: false,
-              impact: text("health.items.ai_summary.external.missing.impact"),
-              summary: hasApiKey
-                ? text("health.items.ai_summary.external.missing.summary_url")
-                : text("health.items.ai_summary.external.missing.summary_key"),
-              suggestion: text("health.items.ai_summary.external.missing.suggestion"),
-              details: aiDetails,
-            },
-      ),
     );
   }
 

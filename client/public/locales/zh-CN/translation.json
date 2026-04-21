@@ -5,9 +5,8 @@
   },
   "admin": {
     "back_to_site": "返回站点",
-    "compat_tasks_description": "批量触发向前兼容任务，用于补齐历史帖子缺失的 AI 摘要和图片 blurhash 元数据。",
+    "compat_tasks_description": "批量触发向前兼容任务，用于补齐历史帖子缺失的图片 blurhash 元数据。",
     "health_description": "检查关键配置、缺失的集成项，以及可能影响服务正常运行的风险。",
-    "queue_status_description": "查看 AI 摘要队列进度、最近任务结果和失败信息。",
     "settings_description": "在统一的后台空间中管理站点行为、集成配置和发布规则。",
     "title": "后台管理",
     "writing_description": "在独立的管理工作区中编写、编辑和发布内容。"
@@ -19,18 +18,6 @@
     "running": "执行中",
     "yes": "是",
     "no": "否",
-    "ai_summary": {
-      "title": "补齐 AI 摘要",
-      "description": "扫描历史已发布帖子，为尚未生成摘要的内容重新入队。",
-      "eligible": "待处理 {{count}} 篇",
-      "force_eligible": "可强制重跑 {{count}} 篇",
-      "enabled": "AI 摘要已启用：{{value}}",
-      "queue_configured": "队列已配置：{{value}}",
-      "run": "开始补齐",
-      "run_force": "强制全部重跑",
-      "result": "AI 摘要任务已入队 {{queued}} 篇，跳过 {{skipped}} 篇。",
-      "result_force": "已强制重跑入队 {{queued}} 篇 AI 摘要任务，跳过 {{skipped}} 篇。"
-    },
     "blurhash": {
       "title": "补齐图片 Blurhash",
       "description": "扫描历史帖子中的图片，为缺失占位图和尺寸元数据的图片补齐 markdown fragment。",
@@ -40,23 +27,6 @@
       "progress": "已处理 {{processed}} / {{total}}，更新 {{updated}} 篇，失败 {{failed}} 篇。",
       "result": "Blurhash 补齐完成：共扫描 {{total}} 篇，成功更新 {{updated}} 篇，失败 {{failed}} 篇。"
     }
-  },
-  "ai_summary": {
-    "message": {
-      "completed": "AI 摘要已生成。",
-      "failed": "AI 摘要生成失败。",
-      "idle": "AI 摘要任务当前未运行。",
-      "pending": "AI 摘要任务已进入队列。",
-      "processing": "AI 摘要正在生成中。"
-    },
-    "status": {
-      "completed": "已完成",
-      "failed": "失败",
-      "idle": "空闲",
-      "pending": "排队中",
-      "processing": "生成中"
-    },
-    "title": "AI 总结"
   },
   "alert": "提示",
   "alias": "别名",
@@ -206,41 +176,6 @@
     "success": "发布成功",
     "title": "发布"
   },
-  "queue_status": {
-    "binding": "队列绑定",
-    "configured": "已配置",
-    "empty_description": "当前没有排队中或最近处理过的 AI 摘要任务。",
-    "empty_title": "暂无队列活动",
-    "delete": "删除",
-    "delete_confirm_description": "确定删除 Feed #{{id}} 的队列任务记录吗？",
-    "delete_confirm_title": "删除队列任务记录",
-    "delete_success": "队列任务记录已删除",
-    "deleting": "删除中",
-    "feed_id": "Feed #{{id}}",
-    "generated_at": "最近更新时间：{{date}}",
-    "load_failed": "队列状态加载失败",
-    "loading": "正在加载队列任务状态...",
-    "not_configured": "未配置",
-    "status": {
-      "completed": "已完成",
-      "failed": "失败",
-      "idle": "空闲",
-      "pending": "排队中",
-      "processing": "处理中"
-    },
-    "summary": {
-      "completed": "已完成任务",
-      "failed": "失败任务",
-      "pending": "排队任务",
-      "processing": "处理中任务"
-    },
-    "retry": "重试",
-    "retry_success": "队列任务已重新入队",
-    "retrying": "重试中",
-    "title": "队列状态",
-    "untitled": "未命名 Feed",
-    "updated_at": "更新时间：{{date}}"
-  },
   "reload": "重试",
   "reset": "重置",
   "save": "保存",
@@ -336,48 +271,6 @@
         }
       },
       "title": "友链设置"
-    },
-    "ai_summary": {
-      "title": "AI 总结设置",
-      "enable": {
-        "title": "启用 AI 总结",
-        "desc": "发布文章时自动生成 AI 总结"
-      },
-      "provider": {
-        "title": "AI 供应商",
-        "desc": "选择或输入 AI 服务供应商"
-      },
-      "model": {
-        "title": "模型",
-        "desc": "选择或输入模型名称"
-      },
-      "api_key": {
-        "title": "API Key",
-        "desc": "输入您的 API 密钥",
-        "set": "已设置",
-        "placeholder_set": "输入新密钥以更新"
-      },
-      "api_url": {
-        "title": "API URL",
-        "desc": "自定义 API 地址（OpenAI 兼容格式）"
-      },
-      "save": {
-        "title": "保存配置",
-        "desc": "保存 AI 配置到数据库",
-        "button": "保存配置"
-      },
-      "save_success": "保存成功",
-      "unsaved_changes": "您有未保存的更改",
-      "test": {
-        "title": "测试模型",
-        "desc": "测试 AI 模型是否可用",
-        "button": "测试连接",
-        "success": "测试成功",
-        "failed": "测试失败",
-        "error": "测试出错",
-        "testing": "正在测试...",
-        "http_error$status": "HTTP 错误 (状态码: {{status}})"
-      }
     },
     "get_config_failed$message": "获取配置失败，{{message}}",
     "import_failed$message": "导入失败，{{message}}",
@@ -618,47 +511,6 @@
         },
         "details": {
           "key": "{{key}}"
-        }
-      },
-      "ai_summary": {
-        "title": "AI 总结",
-        "disabled": {
-          "impact": "文章发布时不会生成 AI 总结。",
-          "summary": "AI 总结已关闭。",
-          "suggestion": "如果你希望发布时自动生成总结，请在设置中启用。"
-        },
-        "no_model": {
-          "impact": "发布或更新内容时，总结生成可能失败。",
-          "summary": "AI 总结已启用，但未配置模型。",
-          "suggestion": "启用 AI 总结前，请先在设置中选择模型。"
-        },
-        "worker_ai": {
-          "ready": {
-            "impact": "可以通过 Workers AI 生成 AI 总结。",
-            "summary": "Workers AI 已为模型 {{model}} 配置完成。"
-          },
-          "missing": {
-            "impact": "发布内容时，AI 总结请求会失败。",
-            "summary": "AI 总结使用了 worker-ai，但缺少 Workers AI binding。",
-            "suggestion": "在使用 worker-ai 提供方前，请先在 wrangler 配置中添加 AI binding。"
-          }
-        },
-        "external": {
-          "ready": {
-            "impact": "可以通过已配置的外部提供方生成 AI 总结。",
-            "summary": "{{provider}} 已为 AI 总结配置完成。",
-            "suggestion": "如果你想验证远程模型响应，可以在设置里使用测试功能。"
-          },
-          "missing": {
-            "impact": "发布内容时，AI 总结请求会失败。",
-            "summary_key": "缺少 AI 提供方密钥。",
-            "summary_url": "缺少 AI 提供方 URL。",
-            "suggestion": "在启用 AI 总结前，请先在设置中配置提供方凭据。"
-          },
-          "details": {
-            "provider": "提供方：{{provider}}",
-            "model": "模型：{{model}}"
-          }
         }
       },
       "webhook": {

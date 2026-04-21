@@ -1,8 +1,6 @@
 import { Hono } from "hono";
 import { wrapTime } from "hono/timing";
 import type { AppContext } from "../core/hono-types";
-import { setAIConfig, getAIConfig } from "../utils/db-config";
-import { testAIModel } from "../utils/ai";
 import { notify } from "../utils/webhook";
 import {
     buildCombinedConfigResponse,
@@ -11,16 +9,13 @@ import {
     isConfigType,
     persistRegularConfig,
     resolveWebhookConfig,
-    splitConfigPayload,
 } from "./config-helpers";
 import { buildHealthCheckResponse } from "./config-health";
-import { buildQueueStatusResponse, deleteQueueStatusTask, retryQueueStatusTask } from "./config-queue-status";
 import { profileAsync } from "../core/server-timing";
 import {
     applyBlurhashCompatUpdate,
     buildCompatTasksResponse,
     listBlurhashCompatCandidates,
-    runCompatAISummaryBackfill,
 } from "./config-compat-tasks";
 
 export function ConfigService(): Hono {
@@ -36,38 +31,6 @@ export function ConfigService(): Hono {
 
         return `globalThis.__RIN_CLIENT_CONFIG__=${serialized};`;
     }
-
-    // POST /config/test-ai - Test AI model configuration
-    // NOTE: Must be defined BEFORE /:type route to avoid being captured as a type parameter
-    app.post('/test-ai', async (c: AppContext) => {
-        const admin = c.get('admin');
-
-        if (!admin) {
-            return c.json({ error: 'Unauthorized' }, 401);
-        }
-
-        const env = c.get('env');
-        const serverConfig = c.get('serverConfig');
-        const body = await wrapTime(c, 'request_body', c.req.json());
-
-        // Get current AI config from database
-        const config = await wrapTime(c, 'ai_config', getAIConfig(serverConfig));
-
-        // Build test config with overrides
-        const testConfig = {
-            provider: body.provider || config.provider,
-            model: body.model || config.model,
-            api_url: body.api_url !== undefined ? body.api_url : config.api_url,
-            api_key: body.api_key !== undefined ? body.api_key : config.api_key,
-        };
-
-        // Test prompt
-        const testPrompt = body.testPrompt || "Hello! This is a test message. Please respond with a simple greeting.";
-
-        // Use unified test function
-        const result = await wrapTime(c, 'ai_test', testAIModel(env, testConfig, testPrompt));
-        return c.json(result);
-    });
 
     app.post('/test-webhook', async (c: AppContext) => {
         const admin = c.get('admin');
@@ -171,19 +134,6 @@ export function ConfigService(): Hono {
         return c.json(await wrapTime(c, 'health_check', buildHealthCheckResponse(clientConfig, serverConfig, env)));
     });
 
-    app.get('/queue-status', async (c: AppContext) => {
-        const admin = c.get('admin');
-
-        if (!admin) {
-            return c.text('Unauthorized', 401);
-        }
-
-        const db = c.get('db');
-        const env = c.get('env');
-
-        return c.json(await wrapTime(c, 'queue_status', buildQueueStatusResponse(db, env)));
-    });
-
     app.get('/compat-tasks', async (c: AppContext) => {
         const admin = c.get('admin');
 
@@ -191,25 +141,7 @@ export function ConfigService(): Hono {
             return c.text('Unauthorized', 401);
         }
 
-        return c.json(await wrapTime(c, 'compat_tasks', buildCompatTasksResponse(c.get('db'), c.get('serverConfig'), c.get('env'))));
-    });
-
-    app.post('/compat-tasks/ai-summary', async (c: AppContext) => {
-        const admin = c.get('admin');
-
-        if (!admin) {
-            return c.text('Unauthorized', 401);
-        }
-
-        try {
-            const body = c.req.header('content-type')?.includes('application/json')
-                ? await wrapTime(c, 'request_body', c.req.json()) as { force?: boolean }
-                : {};
-            return c.json(await wrapTime(c, 'compat_ai_summary', runCompatAISummaryBackfill(c.get('db'), c.get('cache'), c.get('serverConfig'), c.get('env'), Boolean(body.force))));
-        } catch (error) {
-            const message = error instanceof Error ? error.message : String(error);
-            return c.text(message, 400);
-        }
+        return c.json(await wrapTime(c, 'compat_tasks', buildCompatTasksResponse(c.get('db'))));
     });
 
     app.get('/compat-tasks/blurhash', async (c: AppContext) => {
@@ -241,50 +173,6 @@ export function ConfigService(): Hono {
 
         try {
             return c.json(await wrapTime(c, 'compat_blurhash_apply', applyBlurhashCompatUpdate(c.get('db'), c.get('cache'), id, body.content)));
-        } catch (error) {
-            const message = error instanceof Error ? error.message : String(error);
-            const status = message === 'Feed not found' ? 404 : 400;
-            return c.text(message, status);
-        }
-    });
-
-    app.post('/queue-status/:id/retry', async (c: AppContext) => {
-        const admin = c.get('admin');
-
-        if (!admin) {
-            return c.text('Unauthorized', 401);
-        }
-
-        const id = Number(c.req.param('id'));
-        if (!Number.isInteger(id) || id <= 0) {
-            return c.text('Invalid feed id', 400);
-        }
-
-        try {
-            await wrapTime(c, 'queue_retry', retryQueueStatusTask(c.get('db'), c.get('cache'), c.get('serverConfig'), c.get('env'), id));
-            return c.json({ success: true });
-        } catch (error) {
-            const message = error instanceof Error ? error.message : String(error);
-            const status = message === 'Feed not found' ? 404 : 400;
-            return c.text(message, status);
-        }
-    });
-
-    app.delete('/queue-status/:id', async (c: AppContext) => {
-        const admin = c.get('admin');
-
-        if (!admin) {
-            return c.text('Unauthorized', 401);
-        }
-
-        const id = Number(c.req.param('id'));
-        if (!Number.isInteger(id) || id <= 0) {
-            return c.text('Invalid feed id', 400);
-        }
-
-        try {
-            await wrapTime(c, 'queue_delete', deleteQueueStatusTask(c.get('db'), c.get('cache'), id));
-            return c.json({ success: true });
         } catch (error) {
             const message = error instanceof Error ? error.message : String(error);
             const status = message === 'Feed not found' ? 404 : 400;
@@ -352,17 +240,10 @@ export function ConfigService(): Hono {
         const nextClientConfig = body.clientConfig ?? {};
         const nextServerConfig = body.serverConfig ?? {};
 
-        const { regularConfig: regularClientConfig } = splitConfigPayload(nextClientConfig);
-        const { regularConfig: regularServerConfig, aiConfigUpdates } = splitConfigPayload(nextServerConfig);
-
         await Promise.all([
-            persistRegularConfig(clientConfig, regularClientConfig),
-            persistRegularConfig(serverConfig, regularServerConfig),
+            persistRegularConfig(clientConfig, nextClientConfig),
+            persistRegularConfig(serverConfig, nextServerConfig),
         ]);
-
-        if (Object.keys(aiConfigUpdates).length > 0) {
-            await setAIConfig(serverConfig, aiConfigUpdates);
-        }
 
         return c.json(await buildCombinedConfigResponse(clientConfig, serverConfig, env));
     });
@@ -383,14 +264,9 @@ export function ConfigService(): Hono {
         const serverConfig = c.get('serverConfig');
         const clientConfig = c.get('clientConfig');
         const body = await c.req.json();
-        const { regularConfig, aiConfigUpdates } = splitConfigPayload(body);
         
         const config = type === 'server' ? serverConfig : clientConfig;
-        await persistRegularConfig(config, regularConfig);
-        
-        if (Object.keys(aiConfigUpdates).length > 0) {
-            await setAIConfig(serverConfig, aiConfigUpdates);
-        }
+        await persistRegularConfig(config, body);
         
         return c.text('OK');
     });

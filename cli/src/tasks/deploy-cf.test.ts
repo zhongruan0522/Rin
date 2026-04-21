@@ -1,7 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import {
   buildWranglerObservabilityConfig,
-  buildWranglerQueueConfig,
   buildWranglerTriggersConfig,
   collectWorkerSecrets,
 } from "./deploy-cf";
@@ -51,20 +50,6 @@ describe("buildWranglerTriggersConfig", () => {
   it("includes cron triggers for production deploys", () => {
     expect(buildWranglerTriggersConfig(false)).toContain("[triggers]");
     expect(buildWranglerTriggersConfig(false)).toContain('crons = ["*/20 * * * *"]');
-  });
-});
-
-describe("buildWranglerQueueConfig", () => {
-  it("includes queue consumers for preview deploys", () => {
-    const config = buildWranglerQueueConfig("rin-preview-tasks", true);
-    expect(config).toContain('queue = "rin-preview-tasks"');
-    expect(config).toContain("[[queues.consumers]]");
-  });
-
-  it("includes queue consumers for production deploys", () => {
-    const config = buildWranglerQueueConfig("rin-tasks", false);
-    expect(config).toContain("[[queues.producers]]");
-    expect(config).toContain("[[queues.consumers]]");
   });
 });
 

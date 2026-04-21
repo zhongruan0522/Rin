@@ -19,11 +19,9 @@ import { FeedCardPreview } from "../components/feed-card-preview";
 import { FEED_LAYOUT_OPTIONS, normalizeFeedLayout } from "../components/feed-layout-options";
 import { useSiteConfig } from "../hooks/useSiteConfig";
 import { applyThemeColor, normalizeThemeColor } from "../utils/theme-color";
-import { AISummarySettings } from "./settings-ai";
 import { ItemButton, ItemImageInput, ItemInput, ItemSwitch, ItemTitle, ItemWithUpload } from "./settings-items";
 import {
   areSettingsDraftsEqual,
-  buildAIConfigDraftValue,
   createSettingsConfigWrappers,
   importWordPressFile,
   loadSettingsConfigState,
@@ -61,7 +59,6 @@ export function Settings() {
   const [webhookTestMessage, setWebhookTestMessage] = useState("");
   const [draft, setDraft] = useState<SettingsDraft>({ clientConfig: {}, serverConfig: {} });
   const [initialDraft, setInitialDraft] = useState<SettingsDraft>({ clientConfig: {}, serverConfig: {} });
-  const [hasStoredAiApiKey, setHasStoredAiApiKey] = useState(false);
   const ref = useRef(false);
   const initialDraftRef = useRef<SettingsDraft>({ clientConfig: {}, serverConfig: {} });
   const { showAlert, AlertUI } = useAlert();
@@ -77,7 +74,6 @@ export function Settings() {
         setDraft(state.draft);
         setInitialDraft(state.draft);
         initialDraftRef.current = state.draft;
-        setHasStoredAiApiKey(state.hasStoredAiApiKey);
         mergeSessionConfig(state.draft.clientConfig);
         applyThemeColor(getDraftThemeColor(state.draft));
       })
@@ -95,7 +91,6 @@ export function Settings() {
   }, [showAlert, t]);
 
   const { clientConfig, serverConfig } = useMemo(() => createSettingsConfigWrappers(draft), [draft]);
-  const aiValue = useMemo(() => buildAIConfigDraftValue(draft, hasStoredAiApiKey), [draft, hasStoredAiApiKey]);
   const hasUnsavedChanges = !areSettingsDraftsEqual(draft, initialDraft);
   const themeColorValue = normalizeThemeColor(String(clientConfig.get("theme.color") ?? "#fc466b"));
   const feedLayoutValue = normalizeFeedLayout(String(clientConfig.get("feed.layout") ?? "list"));
@@ -119,10 +114,9 @@ export function Settings() {
       setDraft(state.draft);
       setInitialDraft(state.draft);
       initialDraftRef.current = state.draft;
-      setHasStoredAiApiKey(state.hasStoredAiApiKey || aiValue.apiKey.trim().length > 0);
       mergeSessionConfig(state.draft.clientConfig);
       window.dispatchEvent(new Event("storage"));
-      showAlert(t("settings.ai_summary.save_success"));
+      showAlert(t("settings.save_success"));
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
       showAlert(t("settings.update_failed$message", { message }));
@@ -628,36 +622,15 @@ export function Settings() {
             onFileChange={onFileChange}
           />
 
-          <AISummarySettings
-            value={aiValue}
-            onChange={(updates) => {
-              if (updates.enabled !== undefined) {
-                setConfigValue("server", "ai_summary.enabled", updates.enabled);
-              }
-              if (updates.provider !== undefined) {
-                setConfigValue("server", "ai_summary.provider", updates.provider);
-              }
-              if (updates.model !== undefined) {
-                setConfigValue("server", "ai_summary.model", updates.model);
-              }
-              if (updates.apiUrl !== undefined) {
-                setConfigValue("server", "ai_summary.api_url", updates.apiUrl);
-              }
-              if (updates.apiKey !== undefined) {
-                setConfigValue("server", "ai_summary.api_key", updates.apiKey);
-              }
-            }}
-          />
-
           {hasUnsavedChanges && (
             <div className="sticky bottom-4 z-20 mt-6 w-full pb-2">
               <SettingsCard tone="warning">
               <SettingsCardRow
                 header={
                   <SettingsCardHeader
-                    title={t("settings.ai_summary.save.title")}
-                    description={t("settings.ai_summary.unsaved_changes")}
-                    badge={<SettingsBadge tone="warning">{t("settings.ai_summary.unsaved_changes")}</SettingsBadge>}
+                    title={t("settings.save.title")}
+                    description={t("settings.unsaved_changes")}
+                    badge={<SettingsBadge tone="warning">{t("settings.unsaved_changes")}</SettingsBadge>}
                   />
                 }
                 action={

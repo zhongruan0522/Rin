@@ -28,7 +28,6 @@ import type {
   CreateMomentRequest,
   ConfigType,
   ConfigResponse,
-  AIConfig,
   UploadResponse,
   AuthStatus,
   LoginRequest,
@@ -72,43 +71,11 @@ export interface ConfigHealthResponse {
   items: ConfigHealthItem[];
 }
 
-export interface QueueStatusItem {
-  id: number;
-  title: string | null;
-  aiSummaryStatus: "idle" | "pending" | "processing" | "completed" | "failed";
-  aiSummaryError: string;
-  updatedAt: string;
-  createdAt: string;
-}
-
-export interface QueueStatusResponse {
-  queueConfigured: boolean;
-  generatedAt: string;
-  summary: Record<"idle" | "pending" | "processing" | "completed" | "failed", number>;
-  items: QueueStatusItem[];
-}
-
-export interface QueueTaskActionResponse {
-  success: boolean;
-}
-
 export interface CompatTasksResponse {
   generatedAt: string;
-  aiSummary: {
-    enabled: boolean;
-    queueConfigured: boolean;
-    eligible: number;
-    forceEligible: number;
-  };
   blurhash: {
     eligible: number;
   };
-}
-
-export interface CompatAISummaryActionResponse {
-  queued: number;
-  skipped: number;
-  forced: boolean;
 }
 
 export interface CompatBlurhashCandidate {
@@ -150,7 +117,6 @@ export type {
   CreateMomentRequest,
   ConfigType,
   ConfigResponse,
-  AIConfig,
   UploadResponse,
   AuthStatus,
   LoginRequest,
@@ -486,17 +452,8 @@ class ConfigAPI {
     return this.http.get<ConfigHealthResponse>("/api/config/health");
   }
 
-  // GET /api/config/queue-status
-  async getQueueStatus(): Promise<ApiResponse<QueueStatusResponse>> {
-    return this.http.get<QueueStatusResponse>("/api/config/queue-status");
-  }
-
   async getCompatTasks(): Promise<ApiResponse<CompatTasksResponse>> {
     return this.http.get<CompatTasksResponse>("/api/config/compat-tasks");
-  }
-
-  async runCompatAISummary(force = false): Promise<ApiResponse<CompatAISummaryActionResponse>> {
-    return this.http.post<CompatAISummaryActionResponse>("/api/config/compat-tasks/ai-summary", { force });
   }
 
   async getCompatBlurhashCandidates(): Promise<ApiResponse<CompatBlurhashCandidatesResponse>> {
@@ -505,25 +462,6 @@ class ConfigAPI {
 
   async applyCompatBlurhash(feedId: number, content: string): Promise<ApiResponse<CompatBlurhashApplyResponse>> {
     return this.http.post<CompatBlurhashApplyResponse>(`/api/config/compat-tasks/blurhash/${feedId}`, { content });
-  }
-
-  async retryQueueTask(feedId: number): Promise<ApiResponse<QueueTaskActionResponse>> {
-    return this.http.post<QueueTaskActionResponse>(`/api/config/queue-status/${feedId}/retry`);
-  }
-
-  async deleteQueueTask(feedId: number): Promise<ApiResponse<QueueTaskActionResponse>> {
-    return this.http.delete<QueueTaskActionResponse>(`/api/config/queue-status/${feedId}`);
-  }
-
-  // POST /api/config/test-ai - Test AI model configuration
-  async testAI(body: {
-    provider?: string;
-    model?: string;
-    api_url?: string;
-    api_key?: string;
-    testPrompt?: string;
-  }): Promise<ApiResponse<{ success: boolean; response?: string; error?: string; details?: string; provider?: string; model?: string }>> {
-    return this.http.post<any>("/api/config/test-ai", body);
   }
 
   async testWebhook(body: {
@@ -535,26 +473,6 @@ class ConfigAPI {
     test_message?: string;
   }): Promise<ApiResponse<{ success: boolean; error?: string; details?: string }>> {
     return this.http.post("/api/config/test-webhook", body);
-  }
-}
-
-/**
- * AI Config API methods (deprecated, use ConfigAPI instead)
- * @deprecated AI config is now part of server config. Use client.config.get('server') and client.config.update('server', {...}) instead.
- */
-class AIConfigAPI {
-  constructor(private http: HttpClient) {}
-
-  // GET /api/ai-config
-  /** @deprecated Use client.config.get('server') instead */
-  async get(): Promise<ApiResponse<AIConfig>> {
-    return this.http.get<AIConfig>("/api/ai-config");
-  }
-
-  // POST /api/ai-config
-  /** @deprecated Use client.config.update('server', {...}) instead */
-  async update(body: Partial<AIConfig>): Promise<ApiResponse<void>> {
-    return this.http.post<void>("/api/ai-config", body);
   }
 }
 
@@ -658,7 +576,6 @@ export class ApiClient {
   friend: FriendAPI;
   moments: MomentsAPI;
   config: ConfigAPI;
-  aiConfig: AIConfigAPI;
   storage: StorageAPI;
   search: SearchAPI;
   auth: AuthAPI;
@@ -674,7 +591,6 @@ export class ApiClient {
     this.friend = new FriendAPI(this.http);
     this.moments = new MomentsAPI(this.http);
     this.config = new ConfigAPI(this.http);
-    this.aiConfig = new AIConfigAPI(this.http);
     this.storage = new StorageAPI(this.http);
     this.search = new SearchAPI(this.http);
     this.auth = new AuthAPI(this.http);

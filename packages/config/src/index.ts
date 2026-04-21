@@ -1,5 +1,3 @@
-import type { AIConfig } from "@rin/api";
-
 export const WEBHOOK_URL_KEY = "WEBHOOK_URL";
 
 export const CLIENT_CONFIG_DEFAULTS = new Map(
@@ -38,26 +36,6 @@ export const CLIENT_CONFIG_ENV_DEFAULTS: Record<string, string> = {
   "site.description": "DESCRIPTION",
   "site.avatar": "AVATAR",
   "site.page_size": "PAGE_SIZE",
-};
-
-export const AI_CONFIG_PREFIX = "ai_summary.";
-
-export const AI_CONFIG_KEYS = [
-  `${AI_CONFIG_PREFIX}enabled`,
-  `${AI_CONFIG_PREFIX}provider`,
-  `${AI_CONFIG_PREFIX}model`,
-  `${AI_CONFIG_PREFIX}api_key`,
-  `${AI_CONFIG_PREFIX}api_url`,
-] as const;
-
-export const SENSITIVE_SERVER_CONFIG_FIELDS = [`${AI_CONFIG_PREFIX}api_key`] as const;
-
-export const DEFAULT_AI_CONFIG: AIConfig = {
-  enabled: false,
-  provider: "openai",
-  model: "gpt-4o-mini",
-  api_key: "",
-  api_url: "https://api.openai.com/v1",
 };
 
 export class ConfigWrapper {

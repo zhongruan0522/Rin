@@ -15,13 +15,11 @@ export function CompatTasksPage() {
   const [loading, setLoading] = useState(true);
   const [generatedAt, setGeneratedAt] = useState("");
   const [status, setStatus] = useState<{
-    aiSummary: { enabled: boolean; queueConfigured: boolean; eligible: number; forceEligible: number };
     blurhash: { eligible: number };
   }>({
-    aiSummary: { enabled: false, queueConfigured: false, eligible: 0, forceEligible: 0 },
     blurhash: { eligible: 0 },
   });
-  const [runningTask, setRunningTask] = useState<"ai-summary" | "blurhash" | null>(null);
+  const [runningTask, setRunningTask] = useState<"blurhash" | null>(null);
   const [blurhashProgress, setBlurhashProgress] = useState({ total: 0, processed: 0, updated: 0, failed: 0 });
   const { showAlert, AlertUI } = useAlert();
 
@@ -42,26 +40,6 @@ export function CompatTasksPage() {
   useEffect(() => {
     loadStatus();
   }, []);
-
-  const runAISummaryBackfill = async (force = false) => {
-    setRunningTask("ai-summary");
-    try {
-      const { data, error } = await client.config.runCompatAISummary(force);
-      if (error) {
-        showAlert(error.value);
-        return;
-      }
-      if (data) {
-        showAlert(t(
-          data.forced ? "compat_tasks.ai_summary.result_force" : "compat_tasks.ai_summary.result",
-          { queued: data.queued, skipped: data.skipped },
-        ));
-        loadStatus();
-      }
-    } finally {
-      setRunningTask(null);
-    }
-  };
 
   const runBlurhashBackfill = async () => {
     setRunningTask("blurhash");
@@ -131,37 +109,6 @@ export function CompatTasksPage() {
 
       {!loading ? (
         <div className="space-y-4">
-          <SettingsCard tone={status.aiSummary.eligible > 0 ? "warning" : "success"}>
-            <SettingsCardHeader
-              title={t("compat_tasks.ai_summary.title")}
-              description={t("compat_tasks.ai_summary.description")}
-              badge={
-                <SettingsBadge tone={status.aiSummary.eligible > 0 ? "warning" : "success"}>
-                  {t("compat_tasks.ai_summary.eligible", { count: status.aiSummary.eligible })}
-                </SettingsBadge>
-              }
-            />
-            <SettingsCardBody>
-              <div className="space-y-3 text-sm text-neutral-600 dark:text-neutral-300">
-                <p>{t("compat_tasks.ai_summary.enabled", { value: status.aiSummary.enabled ? t("compat_tasks.yes") : t("compat_tasks.no") })}</p>
-                <p>{t("compat_tasks.ai_summary.queue_configured", { value: status.aiSummary.queueConfigured ? t("compat_tasks.yes") : t("compat_tasks.no") })}</p>
-                <p>{t("compat_tasks.ai_summary.force_eligible", { count: status.aiSummary.forceEligible })}</p>
-                <div className="flex flex-wrap gap-3">
-                  <Button
-                    title={runningTask === "ai-summary" ? t("compat_tasks.running") : t("compat_tasks.ai_summary.run")}
-                    disabled={runningTask !== null || status.aiSummary.eligible === 0}
-                    onClick={() => runAISummaryBackfill(false)}
-                  />
-                  <Button
-                    title={runningTask === "ai-summary" ? t("compat_tasks.running") : t("compat_tasks.ai_summary.run_force")}
-                    disabled={runningTask !== null || status.aiSummary.forceEligible === 0}
-                    onClick={() => runAISummaryBackfill(true)}
-                  />
-                </div>
-              </div>
-            </SettingsCardBody>
-          </SettingsCard>
-
           <SettingsCard tone={status.blurhash.eligible > 0 ? "warning" : "success"}>
             <SettingsCardHeader
               title={t("compat_tasks.blurhash.title")}

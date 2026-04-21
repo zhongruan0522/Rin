@@ -96,19 +96,6 @@ export function buildWranglerTriggersConfig(preview = false) {
       `);
 }
 
-export function buildWranglerQueueConfig(taskQueueName: string, preview = false) {
-  return stripIndent(`
-    [[queues.producers]]
-    binding = "TASK_QUEUE"
-    queue = "${taskQueueName}"
-
-    [[queues.consumers]]
-    queue = "${taskQueueName}"
-    max_batch_size = 1
-    max_batch_timeout = 5
-  `);
-}
-
 export function buildWranglerObservabilityConfig(preview = false) {
   if (!preview) {
     return "";
@@ -144,7 +131,6 @@ export async function runCloudflareDeploy(target: "all" | "server" | "client" = 
 
   const dbName = renv("DB_NAME", "rin");
   const workerName = renv("WORKER_NAME", "rin-server");
-  const taskQueueName = env("TASK_QUEUE_NAME", env("AI_SUMMARY_QUEUE_NAME", `${workerName}-tasks`)) ?? `${workerName}-tasks`;
   const r2BucketName = env("R2_BUCKET_NAME", "");
   const s3Endpoint = env("S3_ENDPOINT", "");
   const s3AccessHost = env("S3_ACCESS_HOST", "");
@@ -228,14 +214,6 @@ export async function runCloudflareDeploy(target: "all" | "server" | "client" = 
     process.exit(1);
   }
 
-  const queueCreate = await $`${bunExec} x wrangler queues create ${taskQueueName}`.quiet().nothrow();
-  if (queueCreate.exitCode !== 0 && !isQueueAlreadyPresentError(queueCreate.stderr.toString())) {
-    console.error(`Failed to create Queue "${taskQueueName}"`);
-    console.error(stripIndent(queueCreate.stdout.toString()));
-    console.error(stripIndent(queueCreate.stderr.toString()));
-    process.exit(1);
-  }
-
   const listJson = (JSON.parse(await $`${bunExec} x wrangler d1 list --json`.quiet().text()) as Array<{ name: string; uuid: string }>).find(
     (item) => item.name === dbName,
   );
@@ -252,8 +230,6 @@ export async function runCloudflareDeploy(target: "all" | "server" | "client" = 
     [ai]
     binding = "AI"
   `)} >> wrangler.toml`.quiet();
-
-  await $`echo ${buildWranglerQueueConfig(taskQueueName, preview)} >> wrangler.toml`.quiet();
 
   if (r2BucketName) {
     await $`echo ${stripIndent(`

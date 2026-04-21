@@ -1,10 +1,7 @@
 import {
-  AI_CONFIG_KEYS,
   CLIENT_CONFIG_ENV_DEFAULTS,
-  SENSITIVE_SERVER_CONFIG_FIELDS,
   WEBHOOK_URL_KEY,
 } from "@rin/config";
-import { getFrontendAIEnabled, readAIConfigFromMap } from "../utils/db-config";
 
 type ConfigMapLike = {
   all(): Promise<Map<string, unknown>>;
@@ -49,16 +46,7 @@ export function isConfigType(type: string): type is ConfigTypeParam {
 }
 
 export function maskSensitiveFields(config: Record<string, unknown>): Record<string, unknown> {
-  const result: Record<string, unknown> = {};
-  for (const key in config) {
-    const value = config[key];
-    if (SENSITIVE_SERVER_CONFIG_FIELDS.includes(key as (typeof SENSITIVE_SERVER_CONFIG_FIELDS)[number]) && value) {
-      result[key] = "••••••••";
-    } else {
-      result[key] = value;
-    }
-  }
-  return result;
+  return config;
 }
 
 function normalizeWebhookConfigValue(value: unknown) {
@@ -80,10 +68,6 @@ function normalizeWebhookConfigResponse(config: Record<string, unknown>) {
   result["webhook.body_template"] = normalizeWebhookConfigValue(result["webhook.body_template"]);
 
   return result;
-}
-
-export function isAIConfigKey(key: string): boolean {
-  return AI_CONFIG_KEYS.some((candidate) => candidate === key) || key.startsWith("ai_summary.");
 }
 
 function normalizeOptionalString(value: unknown) {
@@ -147,18 +131,7 @@ export async function resolveWebhookConfig(
 }
 
 export function splitConfigPayload(body: Record<string, unknown>) {
-  const regularConfig: Record<string, unknown> = {};
-  const aiConfigUpdates: Record<string, unknown> = {};
-
-  for (const key in body) {
-    if (isAIConfigKey(key)) {
-      aiConfigUpdates[key.replace("ai_summary.", "")] = body[key];
-    } else {
-      regularConfig[key] = body[key];
-    }
-  }
-
-  return { regularConfig, aiConfigUpdates };
+  return { regularConfig: body };
 }
 
 export async function persistRegularConfig(
@@ -203,7 +176,6 @@ export async function buildServerConfigResponse(
 ) {
   const all = await serverConfig.all();
   const configObj = normalizeWebhookConfigResponse(Object.fromEntries(all));
-  const aiConfig = readAIConfigFromMap(all);
   const webhookUrlValue = configObj["webhook_url"] ?? configObj[WEBHOOK_URL_KEY] ?? env?.WEBHOOK_URL;
 
   if (webhookUrlValue !== undefined && webhookUrlValue !== "") {
@@ -214,32 +186,20 @@ export async function buildServerConfigResponse(
     configObj[WEBHOOK_URL_KEY] = env.WEBHOOK_URL;
   }
 
-  configObj["ai_summary.enabled"] = String(aiConfig.enabled);
-  configObj["ai_summary.provider"] = aiConfig.provider;
-  configObj["ai_summary.model"] = aiConfig.model;
-  configObj["ai_summary.api_url"] = aiConfig.api_url;
-  configObj["ai_summary.api_key"] = aiConfig.api_key.length > 0 ? "••••••••" : "";
-
   return maskSensitiveFields(configObj);
 }
 
 export async function buildClientConfigResponse(
   clientConfig: ConfigMapLike,
-  serverConfig: ConfigReaderLike,
+  _serverConfig: ConfigReaderLike,
   env: Env,
   profile?: ConfigProfiler,
 ) {
   const clientConfigData = profile
     ? await profile("client_config_defaults", () => getClientConfigWithDefaults(clientConfig, env, profile))
     : await getClientConfigWithDefaults(clientConfig, env);
-  const aiEnabled = profile
-    ? await profile("client_ai_enabled", () => getFrontendAIEnabled(serverConfig))
-    : await getFrontendAIEnabled(serverConfig);
 
-  return {
-    ...clientConfigData,
-    "ai_summary.enabled": aiEnabled,
-  };
+  return clientConfigData;
 }
 
 export async function buildCombinedConfigResponse(

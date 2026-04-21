@@ -26,9 +26,6 @@ export interface Feed {
   uid: number;
   createdAt: string;
   updatedAt: string;
-  ai_summary: string;
-  ai_summary_status: "idle" | "pending" | "processing" | "completed" | "failed";
-  ai_summary_error: string;
   hashtags: Array<{ id: number; name: string }>;
   user: {
     avatar: string | null;
@@ -249,18 +246,6 @@ export type ConfigType = 'client' | 'server';
 
 export interface ConfigResponse {
   [key: string]: any;
-}
-
-// ============================================================================
-// AI Config Types
-// ============================================================================
-
-export interface AIConfig {
-  enabled: boolean;
-  provider: string;
-  model: string;
-  api_key: string;
-  api_url: string;
 }
 
 // ============================================================================

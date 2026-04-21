@@ -48,7 +48,6 @@ describe("ConfigService", () => {
             expect(body).toContain('"site.page_size":5');
             expect(res.headers.get("Server-Timing")).toContain("bootstrap_client_config");
             expect(res.headers.get("Server-Timing")).toContain("client_config_all");
-            expect(res.headers.get("Server-Timing")).toContain("client_ai_enabled");
             expect(res.headers.get("Server-Timing")).toContain("bootstrap_script");
         });
 
@@ -94,18 +93,7 @@ describe("ConfigService", () => {
             expect(res.status).toBe(400);
         });
 
-        it("should mask sensitive fields in server config", async () => {
-            await app.request("/server", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer mock_token_1",
-                },
-                body: JSON.stringify({
-                    "ai_summary.api_key": "secret_key_123",
-                }),
-            });
-
+        it("should retrieve server config successfully", async () => {
             const res = await app.request("/server", {
                 method: "GET",
                 headers: {
@@ -115,8 +103,7 @@ describe("ConfigService", () => {
 
             expect(res.status).toBe(200);
             const data = await res.json() as Record<string, any>;
-            // API key should be masked
-            expect(data["ai_summary.api_key"]).toBe("••••••••");
+            expect(data).toBeDefined();
         });
     });
 
@@ -203,47 +190,12 @@ describe("ConfigService", () => {
         });
     });
 
-    describe("GET /queue-status - Queue status", () => {
-        it("should require authentication to read queue status", async () => {
-            const res = await app.request("/queue-status", {
-                method: "GET",
-            });
-
-            expect(res.status).toBe(401);
-        });
-
-        it("should return queue status for admin", async () => {
-            sqlite.exec(`
-                INSERT INTO feeds (id, title, summary, ai_summary, ai_summary_status, ai_summary_error, content, listed, draft, top, uid)
-                VALUES (1, 'Queued Feed', '', '', 'pending', '', 'content', 1, 0, 0, 1)
-            `);
-
-            const res = await app.request("/queue-status", {
-                method: "GET",
-                headers: {
-                    Authorization: "Bearer mock_token_1",
-                },
-            });
-
-            expect(res.status).toBe(200);
-            const data = await res.json() as {
-                queueConfigured: boolean;
-                summary: Record<string, number>;
-                items: Array<{ aiSummaryStatus: string }>;
-            };
-            expect(typeof data.queueConfigured).toBe("boolean");
-            expect(data.summary.pending).toBeGreaterThan(0);
-            expect(data.items.some((item) => item.aiSummaryStatus === "pending")).toBe(true);
-        });
-    });
-
     describe("Compatibility tasks", () => {
         it("should return compatibility task counts for admin", async () => {
             sqlite.exec(`
-                INSERT INTO feeds (id, title, summary, ai_summary, ai_summary_status, ai_summary_error, content, listed, draft, top, uid)
+                INSERT INTO feeds (id, title, summary, content, listed, draft, top, uid)
                 VALUES
-                  (1, 'Needs AI', '', '', 'idle', '', 'content', 1, 0, 0, 1),
-                  (2, 'Needs Blurhash', '', 'summary', 'completed', '', '![img](https://example.com/a.png)', 1, 0, 0, 1)
+                  (1, 'Needs Blurhash', '', '![img](https://example.com/a.png)', 1, 0, 0, 1)
             `);
 
             const res = await app.request("/compat-tasks", {
@@ -255,111 +207,15 @@ describe("ConfigService", () => {
 
             expect(res.status).toBe(200);
             const data = await res.json() as {
-                aiSummary: { eligible: number; forceEligible: number };
                 blurhash: { eligible: number };
             };
-            expect(data.aiSummary.eligible).toBe(1);
-            expect(data.aiSummary.forceEligible).toBe(2);
             expect(data.blurhash.eligible).toBe(1);
-        });
-
-        it("should queue AI summary backfill for eligible feeds", async () => {
-            let sendCalls = 0;
-            env.TASK_QUEUE = {
-                send: async () => {
-                    sendCalls += 1;
-                },
-                sendBatch: async () => {},
-            } as unknown as Queue<any>;
-
-            await app.request("/server", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer mock_token_1",
-                },
-                body: JSON.stringify({
-                    "ai_summary.enabled": "true",
-                    "ai_summary.provider": "worker-ai",
-                    "ai_summary.model": "llama-3-8b",
-                }),
-            });
-
-            sqlite.exec(`
-                INSERT INTO feeds (id, title, summary, ai_summary, ai_summary_status, ai_summary_error, content, listed, draft, top, uid)
-                VALUES
-                  (1, 'Needs AI', '', '', 'idle', '', 'content', 1, 0, 0, 1),
-                  (2, 'Skip Draft', '', '', 'idle', '', 'content', 1, 1, 0, 1),
-                  (3, 'Skip Completed', '', 'done', 'completed', '', 'content', 1, 0, 0, 1)
-            `);
-
-            const res = await app.request("/compat-tasks/ai-summary", {
-                method: "POST",
-                headers: {
-                    Authorization: "Bearer mock_token_1",
-                },
-            });
-
-            expect(res.status).toBe(200);
-            const data = await res.json() as { queued: number; skipped: number; forced: boolean };
-            expect(data.queued).toBe(1);
-            expect(data.skipped).toBe(2);
-            expect(data.forced).toBe(false);
-            expect(sendCalls).toBe(1);
-        });
-
-        it("should force requeue AI summary backfill for posts with existing summaries", async () => {
-            let sendCalls = 0;
-            env.TASK_QUEUE = {
-                send: async () => {
-                    sendCalls += 1;
-                },
-                sendBatch: async () => {},
-            } as unknown as Queue<any>;
-
-            await app.request("/server", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer mock_token_1",
-                },
-                body: JSON.stringify({
-                    "ai_summary.enabled": "true",
-                    "ai_summary.provider": "worker-ai",
-                    "ai_summary.model": "llama-3-8b",
-                }),
-            });
-
-            sqlite.exec(`
-                INSERT INTO feeds (id, title, summary, ai_summary, ai_summary_status, ai_summary_error, content, listed, draft, top, uid)
-                VALUES
-                  (1, 'Needs AI', '', '', 'idle', '', 'content', 1, 0, 0, 1),
-                  (2, 'Has Summary', '', 'done', 'completed', '', 'content', 1, 0, 0, 1),
-                  (3, 'Skip Draft', '', 'done', 'completed', '', 'content', 1, 1, 0, 1),
-                  (4, 'Skip Pending', '', '', 'pending', '', 'content', 1, 0, 0, 1)
-            `);
-
-            const res = await app.request("/compat-tasks/ai-summary", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer mock_token_1",
-                },
-                body: JSON.stringify({ force: true }),
-            });
-
-            expect(res.status).toBe(200);
-            const data = await res.json() as { queued: number; skipped: number; forced: boolean };
-            expect(data.queued).toBe(2);
-            expect(data.skipped).toBe(2);
-            expect(data.forced).toBe(true);
-            expect(sendCalls).toBe(2);
         });
 
         it("should update blurhash metadata without resetting AI summary state", async () => {
             sqlite.exec(`
-                INSERT INTO feeds (id, title, summary, ai_summary, ai_summary_status, ai_summary_error, content, listed, draft, top, uid)
-                VALUES (1, 'Blurhash Feed', '', 'summary', 'completed', '', '![img](https://example.com/a.png)', 1, 0, 0, 1)
+                INSERT INTO feeds (id, title, summary, content, listed, draft, top, uid)
+                VALUES (1, 'Blurhash Feed', '', '![img](https://example.com/a.png)', 1, 0, 0, 1)
             `);
 
             const res = await app.request("/compat-tasks/blurhash/1", {
@@ -374,74 +230,8 @@ describe("ConfigService", () => {
             });
 
             expect(res.status).toBe(200);
-            const row = sqlite.prepare("SELECT content, ai_summary, ai_summary_status FROM feeds WHERE id = 1").get() as any;
+            const row = sqlite.prepare("SELECT content FROM feeds WHERE id = 1").get() as any;
             expect(row.content).toContain("#blurhash=test&width=100&height=50");
-            expect(row.ai_summary).toBe("summary");
-            expect(row.ai_summary_status).toBe("completed");
-        });
-    });
-
-    describe("Queue status actions", () => {
-        it("should retry a failed queue task", async () => {
-            let sendCalls = 0;
-            env.TASK_QUEUE = {
-                send: async () => {
-                    sendCalls += 1;
-                },
-                sendBatch: async () => {},
-            } as unknown as Queue<any>;
-
-            await app.request("/server", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer mock_token_1",
-                },
-                body: JSON.stringify({
-                    "ai_summary.enabled": "true",
-                    "ai_summary.provider": "worker-ai",
-                    "ai_summary.model": "llama-3-8b",
-                }),
-            });
-
-            sqlite.exec(`
-                INSERT INTO feeds (id, title, summary, ai_summary, ai_summary_status, ai_summary_error, content, listed, draft, top, uid)
-                VALUES (1, 'Failed Feed', '', '', 'failed', 'boom', 'content', 1, 0, 0, 1);
-            `);
-
-            const res = await app.request("/queue-status/1/retry", {
-                method: "POST",
-                headers: {
-                    Authorization: "Bearer mock_token_1",
-                },
-            });
-
-            expect(res.status).toBe(200);
-            expect(sendCalls).toBe(1);
-
-            const row = sqlite.prepare("SELECT ai_summary_status, ai_summary_error FROM feeds WHERE id = 1").get() as any;
-            expect(row.ai_summary_status).toBe("pending");
-            expect(row.ai_summary_error).toBe("");
-        });
-
-        it("should delete a completed queue task record", async () => {
-            sqlite.exec(`
-                INSERT INTO feeds (id, title, summary, ai_summary, ai_summary_status, ai_summary_error, content, listed, draft, top, uid)
-                VALUES (1, 'Completed Feed', '', 'summary', 'completed', '', 'content', 1, 0, 0, 1);
-            `);
-
-            const res = await app.request("/queue-status/1", {
-                method: "DELETE",
-                headers: {
-                    Authorization: "Bearer mock_token_1",
-                },
-            });
-
-            expect(res.status).toBe(200);
-
-            const row = sqlite.prepare("SELECT ai_summary_status, ai_summary_error FROM feeds WHERE id = 1").get() as any;
-            expect(row.ai_summary_status).toBe("idle");
-            expect(row.ai_summary_error).toBe("");
         });
     });
 
@@ -489,35 +279,6 @@ describe("ConfigService", () => {
             });
 
             expect(res.status).toBe(200);
-        });
-
-        it("should save AI config to server config storage", async () => {
-            const res = await app.request("/server", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer mock_token_1",
-                },
-                body: JSON.stringify({
-                    "ai_summary.enabled": "true",
-                    "ai_summary.provider": "openai",
-                    "ai_summary.model": "gpt-4o-mini",
-                }),
-            });
-
-            expect(res.status).toBe(200);
-
-            const getRes = await app.request("/server", {
-                method: "GET",
-                headers: {
-                    Authorization: "Bearer mock_token_1",
-                },
-            });
-            expect(getRes.status).toBe(200);
-            const data = await getRes.json() as Record<string, any>;
-            expect(data["ai_summary.enabled"]).toBe("true");
-            expect(data["ai_summary.provider"]).toBe("openai");
-            expect(data["ai_summary.model"]).toBe("gpt-4o-mini");
         });
 
         it("should return 400 for invalid config type", async () => {
@@ -576,110 +337,6 @@ describe("ConfigService", () => {
             });
 
             expect(res.status).toBe(200);
-        });
-    });
-
-    describe("POST /test-ai - Test AI configuration", () => {
-        it("should require authentication to test AI", async () => {
-            const res = await app.request("/test-ai", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    provider: "openai",
-                    model: "gpt-4o-mini",
-                }),
-            });
-
-            expect(res.status).toBe(401);
-        });
-
-        it("should allow admin to test AI configuration", async () => {
-            const res = await app.request("/test-ai", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer mock_token_1",
-                },
-                body: JSON.stringify({
-                    provider: "openai",
-                    model: "gpt-4o-mini",
-                    api_url: "https://api.openai.com/v1",
-                    testPrompt: "Hello",
-                }),
-            });
-
-            // Should either succeed or fail gracefully (not 401)
-            expect(res.status).not.toBe(401);
-        });
-
-        it("should return a readable error when Workers AI binding is missing", async () => {
-            const res = await app.request("/test-ai", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer mock_token_1",
-                },
-                body: JSON.stringify({
-                    provider: "worker-ai",
-                    model: "llama-3-8b",
-                    testPrompt: "Hello",
-                }),
-            });
-
-            expect(res.status).toBe(200);
-
-            const data = await res.json() as {
-                success: boolean;
-                error?: string;
-                details?: string;
-            };
-            expect(data.success).toBe(false);
-            expect(data.error).toBe("Workers AI is not configured");
-        });
-
-        it("should extract plain text from OpenAI-compatible Workers AI responses", async () => {
-            env.AI = {
-                run: async () => ({
-                    id: "chatcmpl-test",
-                    object: "chat.completion",
-                    model: "@cf/zai-org/glm-4.7-flash",
-                    choices: [
-                        {
-                            index: 0,
-                            message: {
-                                role: "assistant",
-                                content: "Hello!",
-                                reasoning: "internal",
-                            },
-                            finish_reason: "stop",
-                        },
-                    ],
-                }),
-            } as any;
-
-            const res = await app.request("/test-ai", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: "Bearer mock_token_1",
-                },
-                body: JSON.stringify({
-                    provider: "worker-ai",
-                    model: "glm-4.7-flash",
-                    testPrompt: "Hello",
-                }),
-            });
-
-            expect(res.status).toBe(200);
-
-            const data = await res.json() as {
-                success: boolean;
-                response?: string;
-            };
-            expect(data.success).toBe(true);
-            expect(data.response).toBe("Hello!");
         });
     });
 
