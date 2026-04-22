@@ -2,7 +2,6 @@
 // This client provides a clean, type-safe interface for all backend API endpoints
 
 import { getAuthToken } from "../utils/auth";
-import { endpoint } from "../config";
 
 // Import shared types
 import type {
@@ -349,11 +348,6 @@ class UserAPI {
   // POST /api/user/logout
   async logout(): Promise<ApiResponse<void>> {
     return this.http.post<void>("/api/user/logout");
-  }
-
-  // GET /api/user/github
-  githubAuth(): string {
-    return `${endpoint}/api/user/github`;
   }
 }
 

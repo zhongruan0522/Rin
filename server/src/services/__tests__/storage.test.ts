@@ -81,7 +81,6 @@ describe('StorageService', () => {
                 sign: async (payload: any) => `mock_token_${payload.id}`,
                 verify: async (token: string) => token.startsWith('mock_token_') ? { id: 1 } : null,
             } as JWTUtils);
-            c.set('oauth2', undefined);
             c.set('admin', false);
             c.set('env', env);
             c.set('uid', undefined);

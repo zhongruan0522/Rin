@@ -147,7 +147,7 @@ export function PasswordAuthService(): Hono<{
         const env = c.env;
         
         return c.json({
-            github: !!(env.RIN_GITHUB_CLIENT_ID && env.RIN_GITHUB_CLIENT_SECRET),
+            github: false,
             password: !!(env.ADMIN_USERNAME && env.ADMIN_PASSWORD),
         });
     });

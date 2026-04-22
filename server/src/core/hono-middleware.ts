@@ -2,7 +2,7 @@
 import { createMiddleware } from "hono/factory";
 import { getCookie, setCookie } from "hono/cookie";
 import { drizzle } from "drizzle-orm/d1";
-import type { AppContext, Variables, JWTUtils, OAuth2Utils } from "./hono-types";
+import type { AppContext, Variables, JWTUtils } from "./hono-types";
 import { eq } from "drizzle-orm";
 import { profileAsync } from "./server-timing";
 
@@ -77,25 +77,11 @@ export const initContainerMiddleware = createMiddleware<{
             return createJWT(secret);
         }));
 
-        let oauth2: OAuth2Utils | undefined = undefined;
-        if (c.env.RIN_GITHUB_CLIENT_ID && c.env.RIN_GITHUB_CLIENT_SECRET) {
-            oauth2 = await container.get('oauth2', async () => profileAsync(c, "init_oauth2", async () => {
-                    const { createOAuthPlugin, GitHubProvider } = await import('../utils/oauth');
-                    return createOAuthPlugin({
-                        GitHub: new GitHubProvider({
-                            clientId: c.env.RIN_GITHUB_CLIENT_ID,
-                            clientSecret: c.env.RIN_GITHUB_CLIENT_SECRET
-                        })
-                    });
-                }));
-        }
-
         c.set('db', db);
         c.set('cache', cache);
         c.set('serverConfig', serverConfig);
         c.set('clientConfig', clientConfig);
         c.set('jwt', jwt);
-        c.set('oauth2', oauth2);
         c.set('admin', false);
         c.set('env', c.env);
     });

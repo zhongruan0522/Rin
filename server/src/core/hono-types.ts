@@ -9,12 +9,6 @@ export interface JWTUtils {
     verify(token: string): Promise<any | null>;
 }
 
-export interface OAuth2Utils {
-    generateState(): string;
-    createRedirectUrl(state: string, provider: string): string;
-    authorize(provider: string, code: string): Promise<{ accessToken: string } | null>;
-}
-
 export interface CacheImpl {
     get(key: string): Promise<any | null>;
     set(key: string, value: any, save?: boolean): Promise<void>;
@@ -34,7 +28,6 @@ export interface Variables {
     serverConfig: CacheImpl;
     clientConfig: CacheImpl;
     jwt: JWTUtils;
-    oauth2?: OAuth2Utils;
     uid?: number;
     admin: boolean;
     username?: string;

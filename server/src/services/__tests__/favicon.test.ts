@@ -85,7 +85,6 @@ describe('FaviconService', () => {
                 verify: async (token: string) => token.startsWith('mock_token_') ? { id: 1 } : null,
             } as JWTUtils;
             c.set('jwt', jwt);
-            c.set('oauth2', undefined);
             c.set('env', env);
             
             // Parse Authorization header and set user info
@@ -154,7 +153,6 @@ describe('FaviconService', () => {
                     sign: async (payload: any) => `mock_token_${payload.id}`,
                     verify: async (token: string) => token.startsWith('mock_token_') ? { id: 1 } : null,
                 } as JWTUtils);
-                c.set('oauth2', undefined);
                 c.set('env', env);
                 c.set('uid', 1);
                 c.set('admin', true);
@@ -245,7 +243,6 @@ describe('FaviconService', () => {
                     sign: async (payload: any) => `mock_token_${payload.id}`,
                     verify: async (token: string) => token.startsWith('mock_token_') ? { id: 1 } : null,
                 } as JWTUtils);
-                c.set('oauth2', undefined);
                 c.set('env', r2Env);
                 c.set('uid', 1);
                 c.set('admin', true);

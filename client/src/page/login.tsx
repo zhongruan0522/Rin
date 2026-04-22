@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { ButtonWithLoading } from "../components/button";
-import { Icon } from "../components/icon";
 import { Input } from "../components/input";
-import { client, oauth_url } from "../app/runtime";
+import { client } from "../app/runtime";
 import { setAuthToken } from "../utils/auth";
 import { getLoginRedirectPath } from "../utils/auth-redirect";
 import { t } from "../i18n";
@@ -11,16 +10,15 @@ import { t } from "../i18n";
 export function LoginPage() {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const [authStatus, setAuthStatus] = useState<{ github: boolean; password: boolean }>({ github: false, password: false });
+    const [passwordReady, setPasswordReady] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
     const [, setLocation] = useLocation();
 
-    // Fetch auth status on mount
     useEffect(() => {
         client.auth.status().then(({ data }) => {
             if (data) {
-                setAuthStatus(data);
+                setPasswordReady(data.password);
             }
         });
     }, []);
@@ -71,7 +69,7 @@ export function LoginPage() {
                 )}
 
                 {/* Password login form */}
-                {authStatus.password && (
+                {passwordReady && (
                     <>
                         <Input
                             value={username}
@@ -98,21 +96,8 @@ export function LoginPage() {
                     </>
                 )}
 
-                {/* OAuth options */}
-                {authStatus.github && (
-                    <div className="flex flex-col justify-center items-center space-y-2 pt-2">
-                        {authStatus.password && <p className="text-xs t-secondary">{t('login.or')}</p>}
-                        {!authStatus.password && <p className="text-xs t-secondary">{t('login.oauth_only')}</p>}
-                        <div className="flex flex-row items-center space-x-4">
-                            <Icon label={t('github_login')} name="ri-github-line" onClick={() => {
-                                window.location.href = `${oauth_url}`
-                            }} hover={true} />
-                        </div>
-                    </div>
-                )}
-
                 {/* No auth methods available */}
-                {!authStatus.github && !authStatus.password && (
+                {!passwordReady && (
                     <p className="text-sm text-red-500">{t('login.no_methods')}</p>
                 )}
             </div>

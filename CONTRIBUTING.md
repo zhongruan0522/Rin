@@ -57,12 +57,8 @@ If you want to skip the hook, run `git commit` with the `--no-verify` option.
 7. Configuring the `.dev.vars' file
    Copy `.dev.example.vars` to `.dev.vars` and fill in the required information
    > [!TIP]   
-   > Typically, you need to fill in the `RIN_GITHUB_CLIENT_ID` and `RIN_GITHUB_CLIENT_SECRET` as well as
-   the `JWT_SECRET` fields.
-   > In the development environment, you need to create a separate GitHub OAuth service with a callback address
-   > of `http://localhost:11498/api/user/github/callback` \\
-   > If you have changed the listening port of the server manually, please also change the port number in the callback
-   address.
+   > Typically, you need to fill in the `JWT_SECRET` field.
+   > You also need to set `ADMIN_USERNAME` and `ADMIN_PASSWORD` for admin login.
 
 8. Start the development server
     ```sh
