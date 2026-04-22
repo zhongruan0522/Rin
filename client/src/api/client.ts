@@ -532,31 +532,6 @@ class WordPressAPI {
   }
 }
 
-/**
- * RSS API methods - direct fetch for RSS feeds
- */
-class RSSAPI {
-  constructor(private baseUrl: string) {}
-
-  // GET /rss.xml
-  async getRSS(): Promise<string> {
-    const response = await fetch(`${this.baseUrl}/rss.xml`);
-    return response.text();
-  }
-
-  // GET /atom.xml
-  async getAtom(): Promise<string> {
-    const response = await fetch(`${this.baseUrl}/atom.xml`);
-    return response.text();
-  }
-
-  // GET /rss.json
-  async getJSON(): Promise<unknown> {
-    const response = await fetch(`${this.baseUrl}/rss.json`);
-    return response.json();
-  }
-}
-
 // ============================================================================
 // Main API Client Class
 // ============================================================================
@@ -574,7 +549,6 @@ export class ApiClient {
   search: SearchAPI;
   auth: AuthAPI;
   wp: WordPressAPI;
-  rss: RSSAPI;
 
   constructor(baseUrl: string) {
     this.http = new HttpClient(baseUrl);
@@ -589,7 +563,6 @@ export class ApiClient {
     this.search = new SearchAPI(this.http);
     this.auth = new AuthAPI(this.http);
     this.wp = new WordPressAPI(this.http);
-    this.rss = new RSSAPI(baseUrl);
   }
 }
 

@@ -166,8 +166,6 @@ export function createMockEnv(overrides: Partial<Env> = {}): Env {
         S3_BUCKET: 'test-bucket',
         S3_FORCE_PATH_STYLE: 'false',
         WEBHOOK_URL: '',
-        RSS_TITLE: 'Test Blog',
-        RSS_DESCRIPTION: 'Test Environment',
         JWT_SECRET: 'test-jwt-secret',
         S3_ACCESS_KEY_ID: 'test-access-key',
         S3_SECRET_ACCESS_KEY: 'test-secret-key',

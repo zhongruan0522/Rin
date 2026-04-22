@@ -1,10 +1,6 @@
 import { useContext, useEffect, useRef, useState } from 'react';
-import Popup from 'reactjs-popup';
 import { useLocation } from 'wouter';
 import { ClientConfigContext } from '../state/config';
-import { Helmet } from "react-helmet";
-import { siteName } from '../utils/constants';
-import { t } from "../i18n";
 import { buildLoginPath, HIDDEN_LOGIN_REDIRECT } from "../utils/auth-redirect";
 
 type ThemeMode = 'light' | 'dark' | 'system';
@@ -83,11 +79,6 @@ function Footer() {
 
     return (
         <footer>
-            <Helmet>
-                <link rel="alternate" type="application/rss+xml" title={siteName} href="/rss.xml" />
-                <link rel="alternate" type="application/atom+xml" title={siteName} href="/atom.xml" />
-                <link rel="alternate" type="application/json" title={siteName} href="/rss.json" />
-            </Helmet>
             <div className="flex flex-col mb-8 space-y-2 justify-center items-center t-primary ani-show">
                 <div ref={footerHtmlRef} />
                 <p className='text-sm text-neutral-500 font-normal link-line'>
@@ -103,35 +94,6 @@ function Footer() {
                     }}>
                         © {new Date().getFullYear()} Powered by <a className='hover:underline' href="https://github.com/openRin/Rin" target="_blank">Rin</a>
                     </span>
-                    {config.getBoolean('rss') && <>
-                        <Spliter />
-                        <Popup trigger={
-                            <button className="hover:underline" type="button">
-                                RSS
-                            </button>
-                        }
-                            position="top center"
-                            arrow={false}
-                            closeOnDocumentClick>
-                            <div className="border-card">
-                                <p className='font-bold t-primary'>
-                                    {t('footer.rss')}
-                                </p>
-                                <p>
-                                    <a href='/rss.xml'>
-                                        RSS
-                                    </a> <Spliter />
-                                    <a href='/atom.xml'>
-                                        Atom
-                                    </a> <Spliter />
-                                    <a href='/rss.json'>
-                                        JSON
-                                    </a>
-                                </p>
-
-                            </div>
-                        </Popup>
-                    </>}
                 </p>
                 <div className="w-fit-content inline-flex rounded-full border border-zinc-200 p-[3px] dark:border-zinc-700">
                     <ThemeButton mode='light' current={modeState} label="Toggle light mode" icon="ri-sun-line" onClick={setMode} />
@@ -141,13 +103,6 @@ function Footer() {
             </div>
         </footer>
     );
-}
-
-function Spliter() {
-    return (<span className='px-1'>
-        |
-    </span>
-    )
 }
 
 function ThemeButton({ current, mode, label, icon, onClick }: { current: ThemeMode, label: string, mode: ThemeMode, icon: string, onClick: (mode: ThemeMode) => void }) {

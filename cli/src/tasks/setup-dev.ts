@@ -58,8 +58,6 @@ S3_ACCESS_HOST = "${env.S3_ACCESS_HOST || ""}"
 S3_BUCKET = "${env.S3_BUCKET}"
 S3_FORCE_PATH_STYLE = "${env.S3_FORCE_PATH_STYLE || "false"}"
 WEBHOOK_URL = "${env.WEBHOOK_URL || ""}"
-RSS_TITLE = "${env.RSS_TITLE || "Rin Development"}"
-RSS_DESCRIPTION = "${env.RSS_DESCRIPTION || "Development Environment"}"
 CACHE_STORAGE_MODE = "${env.CACHE_STORAGE_MODE || "s3"}"
 ADMIN_USERNAME = "${env.ADMIN_USERNAME}"
 ADMIN_PASSWORD = "${env.ADMIN_PASSWORD}"
@@ -85,7 +83,6 @@ preview_bucket_name = "${env.R2_BUCKET_NAME}"`
 DESCRIPTION=${env.DESCRIPTION || ""}
 AVATAR=${env.AVATAR}
 PAGE_SIZE=${env.PAGE_SIZE || "5"}
-RSS_ENABLE=${env.RSS_ENABLE || "false"}
 `,
   );
   fs.writeFileSync(

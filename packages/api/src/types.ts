@@ -335,9 +335,6 @@ export const API_PATHS = {
 
   // WordPress
   WP_IMPORT: '/wp',
-
-  // RSS
-  RSS_GET: (name: string) => `/${encodeURIComponent(name)}`,
 } as const;
 
 export type APIEndpoint = typeof API_PATHS;

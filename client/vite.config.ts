@@ -28,26 +28,6 @@ export default defineConfig(({ mode }) => {
           target: serverTarget,
           changeOrigin: false,
         },
-        "/rss.xml": {
-          target: serverTarget,
-          changeOrigin: false,
-        },
-        "/atom.xml": {
-          target: serverTarget,
-          changeOrigin: false,
-        },
-        "/rss.json": {
-          target: serverTarget,
-          changeOrigin: false,
-        },
-        "/feed.json": {
-          target: serverTarget,
-          changeOrigin: false,
-        },
-        "/feed.xml": {
-          target: serverTarget,
-          changeOrigin: false,
-        },
       },
     },
     // Vitest configuration

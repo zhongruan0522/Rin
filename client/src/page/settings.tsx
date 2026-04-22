@@ -442,14 +442,6 @@ export function Settings() {
               setConfigValue("client", "counter.enabled", checked);
             }}
           />
-          <ItemSwitch
-            title={t("settings.rss.title")}
-            description={t("settings.rss.desc")}
-            checked={clientConfig.getBoolean("rss")}
-            onChange={(checked) => {
-              setConfigValue("client", "rss", checked);
-            }}
-          />
           <ItemWithUpload
             title={t("settings.favicon.title")}
             description={t("settings.favicon.desc")}

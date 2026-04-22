@@ -138,14 +138,11 @@ export async function runCloudflareDeploy(target: "all" | "server" | "client" = 
   const s3Region = renv("S3_REGION", "auto");
   const s3ForcePathStyle = env("S3_FORCE_PATH_STYLE", "false");
   const webhookUrl = env("WEBHOOK_URL", "");
-  const rssTitle = env("RSS_TITLE", "");
-  const rssDescription = env("RSS_DESCRIPTION", "");
   const cacheStorageMode = env("CACHE_STORAGE_MODE", "s3");
   const name = env("NAME", "Rin");
   const description = env("DESCRIPTION", "A lightweight personal blogging system");
   const avatar = env("AVATAR", "");
   const pageSize = env("PAGE_SIZE", "5");
-  const rssEnable = env("RSS_ENABLE", "false");
 
   let finalS3Endpoint = s3Endpoint;
   let finalS3Bucket = s3Bucket;
@@ -191,14 +188,11 @@ export async function runCloudflareDeploy(target: "all" | "server" | "client" = 
       S3_BUCKET = "${finalS3Bucket}"
       S3_FORCE_PATH_STYLE = "${s3ForcePathStyle}"
       WEBHOOK_URL = "${webhookUrl}"
-      RSS_TITLE = "${rssTitle}"
-      RSS_DESCRIPTION = "${rssDescription}"
       CACHE_STORAGE_MODE = "${cacheStorageMode}"
       NAME = "${name}"
       DESCRIPTION = "${description}"
       AVATAR = "${avatar}"
       PAGE_SIZE = "${pageSize}"
-      RSS_ENABLE = "${rssEnable}"
 
       [placement]
       mode = "smart"

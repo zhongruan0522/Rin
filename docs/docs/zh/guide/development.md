@@ -58,7 +58,6 @@ bun run dev
 | `AVATAR` | 否 | 头像地址（可后续修改） | `https://...` |
 | `DESCRIPTION` | 否 | 网站描述（可后续修改） | `A blog` |
 | `PAGE_SIZE` | 否 | 分页大小（可后续修改） | `5` |
-| `RSS_ENABLE` | 否 | 启用 RSS（可后续修改） | `false` |
 
 ### 后端配置
 

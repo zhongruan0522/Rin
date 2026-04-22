@@ -58,7 +58,6 @@ The following environment variables are optional:
 | `AVATAR` | No | Avatar URL (can be modified later) | `https://...` |
 | `DESCRIPTION` | No | Website description (can be modified later) | `A blog` |
 | `PAGE_SIZE` | No | Pagination size (can be modified later) | `5` |
-| `RSS_ENABLE` | No | Enable RSS (can be modified later) | `false` |
 
 ### Backend Configuration
 

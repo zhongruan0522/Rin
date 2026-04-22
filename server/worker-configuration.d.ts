@@ -29,8 +29,6 @@ declare namespace Cloudflare {
 		S3_BUCKET: "your-bucket-name";
 		S3_FORCE_PATH_STYLE: string;
 		WEBHOOK_URL: "";
-		RSS_TITLE: "Rin Development";
-		RSS_DESCRIPTION: "Development Environment";
 		ADMIN_USERNAME: string;
 		ADMIN_PASSWORD: string;
 		JWT_SECRET: string;

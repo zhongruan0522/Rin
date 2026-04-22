@@ -23,7 +23,6 @@ These variables are stored in plaintext in `wrangler.toml` and control feature f
 | `DESCRIPTION` | No | Site description | A lightweight personal blogging system | `site.description` |
 | `AVATAR` | No | Site avatar URL | - | `site.avatar` |
 | `PAGE_SIZE` | No | Default pagination size | 5 | `site.page_size` |
-| `RSS_ENABLE` | No | Enable RSS link | false | `rss` |
 
 :::tip
 Site configuration can be modified via the **Settings Page** after deployment. Environment variables serve as initial defaults only.
@@ -47,8 +46,6 @@ Site configuration can be modified via the **Settings Page** after deployment. E
 |----------|----------|-------------|---------|-------------|
 | `CACHE_STORAGE_MODE` | No | Cache mode: s3/database | s3 | **database** |
 | `WEBHOOK_URL` | No | Comment notification webhook | - | - |
-| `RSS_TITLE` | No | RSS feed title | - | - |
-| `RSS_DESCRIPTION` | No | RSS feed description | - | - |
 
 :::tip For New Users
 We recommend setting `CACHE_STORAGE_MODE` to `database` to reduce deployment complexity without additional S3 cache configuration.
@@ -101,7 +98,6 @@ NAME                    # Site name
 DESCRIPTION             # Site description
 AVATAR                  # Site avatar URL
 PAGE_SIZE               # Pagination size
-RSS_ENABLE              # Enable RSS
 CACHE_STORAGE_MODE      # Cache mode (recommended: database)
 R2_BUCKET_NAME          # Optional: if set, deploy derives S3_* from this bucket; if unset, no R2 bucket is auto-selected
 WORKER_NAME             # Worker name (optional)

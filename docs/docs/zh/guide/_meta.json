@@ -3,7 +3,6 @@
   "deploy",
   "development",
   "webhook",
-  "rss",
   "migration",
   "changelog",
   "testing",

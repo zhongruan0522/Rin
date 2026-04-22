@@ -103,9 +103,6 @@ const strings: Record<string, string> = {
   "feed_card.published$time": "{{time}} 发布",
   "feed_card.updated$time": "{{time}} 更新",
 
-  // footer
-  "footer.rss": "RSS 订阅链接",
-
   // friends
   "friends.apply": "申请友链",
   "friends.create": "创建友链",
@@ -260,13 +257,6 @@ const strings: Record<string, string> = {
   "settings.theme_color.title": "主题色",
   "settings.theme_color.desc": "选择按钮、高亮和交互元素使用的强调色",
   "settings.theme_color.custom": "自定义",
-  "settings.theme_color.options.rose": "玫红",
-  "settings.theme_color.options.violet": "紫色",
-  "settings.theme_color.options.blue": "蓝色",
-  "settings.theme_color.options.teal": "青绿",
-  "settings.theme_color.options.orange": "橙色",
-  "settings.rss.desc": "启用站点底部 RSS 订阅链接",
-  "settings.rss.title": "RSS 订阅链接",
   "settings.title": "设置",
   "settings.save.title": "未保存的更改",
   "settings.unsaved_changes": "您有未保存的更改",
@@ -369,14 +359,6 @@ const strings: Record<string, string> = {
   "health.items.webhook.missing.impact": "评论和友链事件不会推送到外部聊天工具。",
   "health.items.webhook.missing.summary": "Webhook URL 未配置。",
   "health.items.webhook.missing.suggestion": "如果你依赖外部通知，请在服务端配置或环境变量中设置 WEBHOOK_URL。",
-  "health.items.rss.title": "RSS 与 Feed 端点",
-  "health.items.rss.enabled.impact": "Feed 端点已启用；如果没有存储支持，会退回到按需生成。",
-  "health.items.rss.enabled.summary_cached": "RSS 已启用，且对象存储可用于缓存生成的 Feed 产物。",
-  "health.items.rss.enabled.summary_on_demand": "RSS 已启用，但由于对象存储不完整，Feed 产物将按需生成。",
-  "health.items.rss.enabled.suggestion": "如果你希望远程缓存 Feed 产物，请配置对象存储。",
-  "health.items.rss.disabled.impact": "访客不会在站点页脚看到 RSS/Atom 链接。",
-  "health.items.rss.disabled.summary": "客户端设置中已关闭 RSS。",
-  "health.items.rss.disabled.suggestion": "如果你希望暴露 Feed 发现链接和 Feed 端点，请在设置中启用 RSS。",
   "health.items.site_identity.title": "站点标识",
   "health.items.site_identity.ready.impact": "访客可以在界面中看到已配置的站点名称。",
   "health.items.site_identity.ready.summary": "站点标识已为 {{name}} 配置完成。",

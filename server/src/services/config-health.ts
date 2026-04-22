@@ -40,14 +40,12 @@ export async function buildHealthCheckResponse(
 ): Promise<HealthCheckResponse> {
   const [
     loginEnabled,
-    rssEnabled,
     siteName,
     siteAvatar,
     webhookUrl,
     friendCrontab,
   ] = await Promise.all([
     clientConfig.getOrDefault("login.enabled", true),
-    clientConfig.getOrDefault("rss", false),
     clientConfig.get("site.name"),
     clientConfig.get("site.avatar"),
     serverConfig.get(WEBHOOK_URL_KEY),
@@ -202,34 +200,6 @@ export async function buildHealthCheckResponse(
             impact: text("health.items.webhook.missing.impact"),
             summary: text("health.items.webhook.missing.summary"),
             suggestion: text("health.items.webhook.missing.suggestion"),
-          },
-    ),
-  );
-
-  items.push(
-    createItem(
-      rssEnabled
-        ? {
-            id: "rss",
-            title: text("health.items.rss.title"),
-            status: missingStorageKeys.length === 0 ? "success" : "warning",
-            configured: true,
-            impact: text("health.items.rss.enabled.impact"),
-            summary: missingStorageKeys.length === 0
-              ? text("health.items.rss.enabled.summary_cached")
-              : text("health.items.rss.enabled.summary_on_demand"),
-            suggestion: missingStorageKeys.length === 0
-              ? text("health.items.common.no_action")
-              : text("health.items.rss.enabled.suggestion"),
-          }
-        : {
-            id: "rss",
-            title: text("health.items.rss.title"),
-            status: "warning",
-            configured: false,
-            impact: text("health.items.rss.disabled.impact"),
-            summary: text("health.items.rss.disabled.summary"),
-            suggestion: text("health.items.rss.disabled.suggestion"),
           },
     ),
   );

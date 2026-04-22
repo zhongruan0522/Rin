@@ -23,7 +23,6 @@ Rin 部署需要配置两类环境变量：**Variables（明文变量）**和**S
 | `DESCRIPTION` | 否 | 网站描述 | A lightweight personal blogging system | `site.description` |
 | `AVATAR` | 否 | 网站头像 URL | - | `site.avatar` |
 | `PAGE_SIZE` | 否 | 默认分页大小 | 5 | `site.page_size` |
-| `RSS_ENABLE` | 否 | 启用 RSS 链接 | false | `rss` |
 
 :::tip
 站点配置可在部署后通过**设置页面**修改，环境变量仅作为初始值。
@@ -47,8 +46,6 @@ Rin 部署需要配置两类环境变量：**Variables（明文变量）**和**S
 |--------|------|------|--------|--------|
 | `CACHE_STORAGE_MODE` | 否 | 缓存模式：s3/database | s3 | **database** |
 | `WEBHOOK_URL` | 否 | 评论通知 Webhook | - | - |
-| `RSS_TITLE` | 否 | RSS 标题 | - | - |
-| `RSS_DESCRIPTION` | 否 | RSS 描述 | - | - |
 
 :::tip 新用户推荐
 建议将 `CACHE_STORAGE_MODE` 设为 `database`，无需额外配置 S3 缓存即可使用，降低部署复杂度。
@@ -101,7 +98,6 @@ NAME              # 网站名称
 DESCRIPTION       # 网站描述
 AVATAR            # 网站头像
 PAGE_SIZE         # 分页大小
-RSS_ENABLE        # 是否启用 RSS
 CACHE_STORAGE_MODE # 缓存模式（推荐 database）
 R2_BUCKET_NAME    # 可选：设置后部署会从该 bucket 推导 S3_*；未设置时不会自动选择任何 R2 bucket
 WORKER_NAME       # Worker 名称（可选）
