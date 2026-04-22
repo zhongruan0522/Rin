@@ -37,8 +37,6 @@ runs:
         S3_ACCESS_HOST = "https://example.s3.endpoint"
         S3_BUCKET = "rin-bucket"
         S3_FORCE_PATH_STYLE = "false"
-        RSS_TITLE = "Rin"
-        RSS_DESCRIPTION = "A lightweight personal blogging system"
         CACHE_STORAGE_MODE = "s3"
 
         [[d1_databases]]

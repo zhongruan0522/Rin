@@ -161,7 +161,6 @@ jobs:
           REPO_DESCRIPTION: ${{ vars.DESCRIPTION }}
           REPO_AVATAR: ${{ vars.AVATAR }}
           REPO_PAGE_SIZE: ${{ vars.PAGE_SIZE }}
-          REPO_RSS_ENABLE: ${{ vars.RSS_ENABLE }}
           REPO_WORKER_NAME: ${{ vars.WORKER_NAME }}
           REPO_DB_NAME: ${{ vars.DB_NAME }}
         run: |
@@ -184,7 +183,6 @@ jobs:
           echo "description=${REPO_DESCRIPTION}" >> $GITHUB_OUTPUT
           echo "avatar=${REPO_AVATAR}" >> $GITHUB_OUTPUT
           echo "page_size=${REPO_PAGE_SIZE}" >> $GITHUB_OUTPUT
-          echo "rss_enable=${REPO_RSS_ENABLE}" >> $GITHUB_OUTPUT
 
       - name: Deploy to Cloudflare
         id: deploy
@@ -197,7 +195,6 @@ jobs:
           DESCRIPTION: ${{ steps.config.outputs.description || 'A lightweight personal blogging system' }}
           AVATAR: ${{ steps.config.outputs.avatar || '' }}
           PAGE_SIZE: ${{ steps.config.outputs.page_size || '5' }}
-          RSS_ENABLE: ${{ steps.config.outputs.rss_enable || 'false' }}
           S3_CACHE_FOLDER: ${{ vars.S3_CACHE_FOLDER || 'cache/' }}
           S3_FOLDER: ${{ vars.S3_FOLDER || 'images/' }}
           S3_REGION: ${{ vars.S3_REGION || 'auto' }}
@@ -212,8 +209,6 @@ jobs:
           ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
           JWT_SECRET: ${{ secrets.JWT_SECRET || '' }}
           WEBHOOK_URL: ${{ vars.WEBHOOK_URL || '' }}
-          RSS_TITLE: ${{ vars.RSS_TITLE || '' }}
-          RSS_DESCRIPTION: ${{ vars.RSS_DESCRIPTION || '' }}
           CACHE_STORAGE_MODE: ${{ vars.CACHE_STORAGE_MODE || 's3' }}
         run: |
           set -euo pipefail
