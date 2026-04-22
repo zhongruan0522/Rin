@@ -135,6 +135,58 @@ describe('FeedService', () => {
             const data = await res.json() as any;
             expect(data.size).toBe(1);
         });
+
+        it('should show draft feeds to admin in default listing', async () => {
+            // Create a published feed
+            await app.request('/', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer mock_token_1',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title: 'Published Feed',
+                    content: 'Published Content',
+                    listed: true,
+                    draft: false,
+                    tags: [],
+                }),
+            }, env);
+
+            // Create a draft feed (仅自己可见)
+            await app.request('/', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer mock_token_1',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    title: 'Draft Feed',
+                    content: 'Draft Content',
+                    listed: true,
+                    draft: true,
+                    tags: [],
+                }),
+            }, env);
+            
+            // Admin should see both feeds in default listing
+            const adminRes = await app.request('/', {
+                method: 'GET',
+                headers: { 'Authorization': 'Bearer mock_token_1' },
+            }, env);
+            
+            expect(adminRes.status).toBe(200);
+            const adminData = await adminRes.json() as any;
+            expect(adminData.size).toBe(2);
+
+            // Anonymous user should only see published feed
+            const anonRes = await app.request('/', { method: 'GET' }, env);
+            
+            expect(anonRes.status).toBe(200);
+            const anonData = await anonRes.json() as any;
+            expect(anonData.size).toBe(1);
+            expect(anonData.data[0].title).toBe('Published Feed');
+        });
     });
 
     describe('GET /:id - Get single feed', () => {

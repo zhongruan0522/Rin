@@ -48,8 +48,8 @@ export function FeedService(): Hono<{
 
         const page_num = (page ? parseInt(page) > 0 ? parseInt(page) : 1 : 1) - 1;
         const limit_num = limit ? parseInt(limit) > 50 ? 50 : parseInt(limit) : 20;
-        const cacheKey = `feeds_${type}_${page_num}_${limit_num}`;
-        const cached = await profileAsync(c, 'feed_list_cache_get', () => cache.get(cacheKey));
+        const cacheKey = `feeds_${type}_${page_num}_${limit_num}_${admin}`;
+        const cached = !admin && await profileAsync(c, 'feed_list_cache_get', () => cache.get(cacheKey));
 
         if (cached) {
             return c.json(cached);
@@ -59,7 +59,9 @@ export function FeedService(): Hono<{
             ? eq(feeds.draft, 1)
             : type === 'unlisted'
                 ? and(eq(feeds.draft, 0), eq(feeds.listed, 0))
-                : and(eq(feeds.draft, 0), eq(feeds.listed, 1));
+                : admin
+                    ? eq(feeds.listed, 1)
+                    : and(eq(feeds.draft, 0), eq(feeds.listed, 1));
 
         const size = await profileAsync(c, 'feed_list_count', () => db.select({ count: count() }).from(feeds).where(where));
 
@@ -100,7 +102,7 @@ export function FeedService(): Hono<{
 
         const data = { size: size[0].count, data: feed_list, hasNext };
 
-        if (type === undefined || type === 'normal' || type === '') {
+        if (!admin && (type === undefined || type === 'normal' || type === '')) {
             await profileAsync(c, 'feed_list_cache_set', () => cache.set(cacheKey, data));
         }
 
