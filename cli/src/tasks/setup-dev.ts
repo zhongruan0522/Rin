@@ -40,6 +40,7 @@ export async function runSetupDev() {
 name = "${env.WORKER_NAME || "rin-server"}"
 main = "server/src/_worker.ts"
 compatibility_date = "2025-03-21"
+compatibility_flags = ["nodejs_compat"]
 
 [assets]
 directory = "./dist/client"

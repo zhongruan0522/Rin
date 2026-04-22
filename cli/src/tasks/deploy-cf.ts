@@ -176,6 +176,7 @@ export async function runCloudflareDeploy(target: "all" | "server" | "client" = 
       name = "${workerName}"
       main = "${serverMain}"
       compatibility_date = "2026-01-20"
+      compatibility_flags = ["nodejs_compat"]
 
       [assets]
       directory = "./dist/client"
