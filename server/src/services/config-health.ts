@@ -40,12 +40,10 @@ export async function buildHealthCheckResponse(
     loginEnabled,
     siteName,
     siteAvatar,
-    friendCrontab,
   ] = await Promise.all([
     clientConfig.getOrDefault("login.enabled", true),
     clientConfig.get("site.name"),
     clientConfig.get("site.avatar"),
-    serverConfig.getOrDefault("friend_crontab", true),
   ]);
 
   const items: HealthCheckItem[] = [];
