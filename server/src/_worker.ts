@@ -16,4 +16,11 @@ export default {
     ) {
         return handleScheduled(_controller, env, ctx);
     },
+
+    async queue(
+        _batch: MessageBatch<unknown>,
+        _env: Env,
+    ) {
+        // No-op: Cloudflare requires a queue handler when a Queue binding exists.
+    },
 }
