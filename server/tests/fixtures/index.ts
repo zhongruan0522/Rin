@@ -165,7 +165,6 @@ export function createMockEnv(overrides: Partial<Env> = {}): Env {
         S3_ACCESS_HOST: 'https://test-image-domain.com',
         S3_BUCKET: 'test-bucket',
         S3_FORCE_PATH_STYLE: 'false',
-        WEBHOOK_URL: '',
         JWT_SECRET: 'test-jwt-secret',
         S3_ACCESS_KEY_ID: 'test-access-key',
         S3_SECRET_ACCESS_KEY: 'test-secret-key',

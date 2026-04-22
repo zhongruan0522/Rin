@@ -4,8 +4,6 @@ import type { AppContext, CacheImpl, DB } from "../core/hono-types";
 import { profileAsync } from "../core/server-timing";
 import * as schema from "../db/schema";
 import { friends } from "../db/schema";
-import { notify } from "../utils/webhook";
-import { resolveWebhookConfig } from "./config-helpers";
 
 export function FriendService(): Hono {
     const app = new Hono();
@@ -76,35 +74,6 @@ export function FriendService(): Hono {
             name, desc, avatar, url, uid: uid, accepted
         }));
 
-        if (!admin) {
-            const {
-                webhookUrl,
-                webhookMethod,
-                webhookContentType,
-                webhookHeaders,
-                webhookBodyTemplate,
-            } = await profileAsync(c, 'friend_create_webhook_config', () => resolveWebhookConfig(serverConfig, env));
-            const frontendUrl = new URL(c.req.url).origin;
-            const content = `${frontendUrl}/friends\n${username} 申请友链: ${name}\n${desc}\n${url}`;
-            await profileAsync(c, 'friend_create_notify', () => notify(
-                webhookUrl || "",
-                {
-                    event: "friend.created",
-                    message: content,
-                    title: name,
-                    url: `${frontendUrl}/friends`,
-                    username: username || "",
-                    content: url,
-                    description: desc,
-                },
-                {
-                    method: webhookMethod,
-                    contentType: webhookContentType,
-                    headers: webhookHeaders,
-                    bodyTemplate: webhookBodyTemplate,
-                },
-            ));
-        }
         return c.text('OK');
     });
 
@@ -160,35 +129,6 @@ export function FriendService(): Hono {
             sort_order: finalSortOrder === undefined ? undefined : finalSortOrder,
         }).where(eq(friends.id, parseInt(id))));
         
-        if (!admin) {
-            const {
-                webhookUrl,
-                webhookMethod,
-                webhookContentType,
-                webhookHeaders,
-                webhookBodyTemplate,
-            } = await profileAsync(c, 'friend_update_webhook_config', () => resolveWebhookConfig(serverConfig, env));
-            const frontendUrl = new URL(c.req.url).origin;
-            const content = `${frontendUrl}/friends\n${username} 更新友链: ${name}\n${desc}\n${url}`;
-            await profileAsync(c, 'friend_update_notify', () => notify(
-                webhookUrl || "",
-                {
-                    event: "friend.updated",
-                    message: content,
-                    title: name,
-                    url: `${frontendUrl}/friends`,
-                    username: username || "",
-                    content: url,
-                    description: desc,
-                },
-                {
-                    method: webhookMethod,
-                    contentType: webhookContentType,
-                    headers: webhookHeaders,
-                    bodyTemplate: webhookBodyTemplate,
-                },
-            ));
-        }
         return c.text('OK');
     });
 

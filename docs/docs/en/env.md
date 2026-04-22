@@ -45,7 +45,6 @@ Site configuration can be modified via the **Settings Page** after deployment. E
 | Variable | Required | Description | Default | Recommended |
 |----------|----------|-------------|---------|-------------|
 | `CACHE_STORAGE_MODE` | No | Cache mode: s3/database | s3 | **database** |
-| `WEBHOOK_URL` | No | Comment notification webhook | - | - |
 
 :::tip For New Users
 We recommend setting `CACHE_STORAGE_MODE` to `database` to reduce deployment complexity without additional S3 cache configuration.

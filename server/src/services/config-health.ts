@@ -1,5 +1,3 @@
-import { WEBHOOK_URL_KEY } from "@rin/config";
-
 type HealthStatus = "success" | "warning" | "danger";
 type HealthTextValues = Record<string, string | number | boolean>;
 
@@ -42,13 +40,11 @@ export async function buildHealthCheckResponse(
     loginEnabled,
     siteName,
     siteAvatar,
-    webhookUrl,
     friendCrontab,
   ] = await Promise.all([
     clientConfig.getOrDefault("login.enabled", true),
     clientConfig.get("site.name"),
     clientConfig.get("site.avatar"),
-    serverConfig.get(WEBHOOK_URL_KEY),
     serverConfig.getOrDefault("friend_crontab", true),
   ]);
 
@@ -176,33 +172,6 @@ export async function buildHealthCheckResponse(
       }),
     );
   }
-
-  const webhookValue = (webhookUrl || env.WEBHOOK_URL || "").toString();
-  items.push(
-    createItem(
-      webhookValue
-        ? {
-            id: "webhook",
-            title: text("health.items.webhook.title"),
-            status: "success",
-            configured: true,
-            impact: text("health.items.webhook.ready.impact"),
-            summary: text("health.items.webhook.ready.summary"),
-            suggestion: friendCrontab
-              ? text("health.items.common.no_action")
-              : text("health.items.webhook.ready.suggestion_optional"),
-          }
-        : {
-            id: "webhook",
-            title: text("health.items.webhook.title"),
-            status: "warning",
-            configured: false,
-            impact: text("health.items.webhook.missing.impact"),
-            summary: text("health.items.webhook.missing.summary"),
-            suggestion: text("health.items.webhook.missing.suggestion"),
-          },
-    ),
-  );
 
   const finalSiteName = String(siteName || "").trim();
   const finalSiteAvatar = String(siteAvatar || "").trim();

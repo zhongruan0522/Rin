@@ -34,11 +34,6 @@ import {
 
 import "../utils/thumb.css";
 
-const WEBHOOK_METHOD_OPTIONS = ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"].map((value) => ({
-  label: value,
-  value,
-}));
-
 const THEME_COLOR_OPTIONS = [
   { label: "Rose", value: "#fc466b" },
   { label: "Violet", value: "#7c3aed" },
@@ -54,8 +49,6 @@ export function Settings() {
   const [msgList, setMsgList] = useState<{ title: string; reason: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [testingWebhook, setTestingWebhook] = useState(false);
-  const [webhookTestMessage, setWebhookTestMessage] = useState("");
   const [draft, setDraft] = useState<SettingsDraft>({ clientConfig: {}, serverConfig: {} });
   const [initialDraft, setInitialDraft] = useState<SettingsDraft>({ clientConfig: {}, serverConfig: {} });
   const ref = useRef(false);
@@ -142,31 +135,6 @@ export function Settings() {
       } else if (error) {
         showAlert(t("settings.import_failed$message", { message: error.value }));
       }
-    }
-  }
-
-  async function handleTestWebhook() {
-    setTestingWebhook(true);
-    try {
-      const { data, error } = await client.config.testWebhook({
-        webhook_url: String(serverConfig.get("webhook_url") ?? ""),
-        "webhook.method": String(serverConfig.get("webhook.method") ?? ""),
-        "webhook.content_type": String(serverConfig.get("webhook.content_type") ?? ""),
-        "webhook.headers": String(serverConfig.get("webhook.headers") ?? ""),
-        "webhook.body_template": String(serverConfig.get("webhook.body_template") ?? ""),
-        test_message: webhookTestMessage,
-      });
-
-      if (error || !data?.success) {
-        const message = error?.value || data?.error || t("settings.webhook.test.failed");
-        const details = data?.details ? `\n${data.details}` : "";
-        showAlert(`${message}${details}`);
-        return;
-      }
-
-      showAlert(t("settings.webhook.test.success"));
-    } finally {
-      setTestingWebhook(false);
     }
   }
 
@@ -457,103 +425,6 @@ export function Settings() {
               setConfigValue("client", "footer", value);
             }}
           />
-
-          <ItemTitle title={t("settings.webhook.title")} />
-          <ItemInput
-            title={t("settings.webhook.url.title")}
-            description={t("settings.webhook.url.desc")}
-            configKeyTitle="WEBHOOK_URL"
-            value={String(serverConfig.get("webhook_url") ?? "")}
-            placeholder="https://example.com/webhook"
-            onChange={(value) => {
-              setConfigValue("server", "webhook_url", value);
-            }}
-          />
-          <div className="w-full">
-            <SettingsCard>
-              <SettingsCardRow
-                header={
-                  <SettingsCardHeader
-                    title={t("settings.webhook.method.title")}
-                    description={t("settings.webhook.method.desc")}
-                  />
-                }
-                action={
-                  <SearchableSelect
-                    value={String(serverConfig.get("webhook.method") ?? "")}
-                    onChange={(value) => {
-                      setConfigValue("server", "webhook.method", value);
-                    }}
-                    options={WEBHOOK_METHOD_OPTIONS}
-                    placeholder={String(serverConfig.default("webhook.method") ?? "POST")}
-                    searchPlaceholder={t("settings.webhook.method.title")}
-                    emptyLabel={t("no_more")}
-                    allowCustomValue
-                    customValueLabel={(value) => `${t("update.title")}: ${value}`}
-                  />
-                }
-              />
-            </SettingsCard>
-          </div>
-          <ItemInput
-            title={t("settings.webhook.content_type.title")}
-            description={t("settings.webhook.content_type.desc")}
-            configKeyTitle="Content-Type"
-            value={String(serverConfig.get("webhook.content_type") ?? "")}
-            placeholder={String(serverConfig.default("webhook.content_type") ?? "application/json")}
-            onChange={(value) => {
-              setConfigValue("server", "webhook.content_type", value);
-            }}
-          />
-          <ItemInput
-            title={t("settings.webhook.headers.title")}
-            description={t("settings.webhook.headers.desc")}
-            configKeyTitle={t("settings.webhook.headers.label")}
-            value={String(serverConfig.get("webhook.headers") ?? "")}
-            placeholder={String(serverConfig.default("webhook.headers") ?? "{}")}
-            onChange={(value) => {
-              setConfigValue("server", "webhook.headers", value);
-            }}
-          />
-          <ItemInput
-            title={t("settings.webhook.body_template.title")}
-            description={t("settings.webhook.body_template.desc")}
-            configKeyTitle={t("settings.webhook.body_template.label")}
-            value={String(serverConfig.get("webhook.body_template") ?? "")}
-            placeholder={String(serverConfig.default("webhook.body_template") ?? "")}
-            onChange={(value) => {
-              setConfigValue("server", "webhook.body_template", value);
-            }}
-          />
-          <div className="w-full">
-            <SettingsCard>
-              <SettingsCardRow
-                header={
-                  <SettingsCardHeader
-                    title={t("settings.webhook.test.title")}
-                    description={t("settings.webhook.test.desc")}
-                  />
-                }
-                action={
-                  <Button
-                    title={testingWebhook ? t("settings.webhook.test.sending") : t("settings.webhook.test.button")}
-                    onClick={handleTestWebhook}
-                    disabled={testingWebhook}
-                  />
-                }
-              />
-              <SettingsCardBody>
-                <textarea
-                  value={webhookTestMessage}
-                  placeholder={t("settings.webhook.test.placeholder")}
-                  onChange={(event) => {
-                    setWebhookTestMessage(event.target.value);
-                  }}
-                  className="min-h-28 w-full rounded-xl border border-black/10 bg-w px-4 py-3 text-sm t-primary outline-none transition-colors placeholder:text-neutral-400 focus:border-black/20 focus:ring-2 focus:ring-theme/10 dark:border-white/10 dark:placeholder:text-neutral-500 dark:focus:border-white/20"
-                />
-              </SettingsCardBody>
-            </SettingsCard>
-          </div>
 
           <ItemTitle title={t("settings.friend.title")} />
           <ItemSwitch

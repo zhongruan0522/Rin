@@ -457,17 +457,6 @@ class ConfigAPI {
   async applyCompatBlurhash(feedId: number, content: string): Promise<ApiResponse<CompatBlurhashApplyResponse>> {
     return this.http.post<CompatBlurhashApplyResponse>(`/api/config/compat-tasks/blurhash/${feedId}`, { content });
   }
-
-  async testWebhook(body: {
-    webhook_url?: string;
-    "webhook.method"?: string;
-    "webhook.content_type"?: string;
-    "webhook.headers"?: string;
-    "webhook.body_template"?: string;
-    test_message?: string;
-  }): Promise<ApiResponse<{ success: boolean; error?: string; details?: string }>> {
-    return this.http.post("/api/config/test-webhook", body);
-  }
 }
 
 /**

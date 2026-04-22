@@ -5,7 +5,6 @@
       { "text": "Introduction", "link": "/guide/" },
       { "text": "Deploy", "link": "/guide/deploy" },
       { "text": "Development", "link": "/guide/development" },
-      { "text": "Webhook", "link": "/guide/webhook" },
       { "text": "Migration", "link": "/guide/migration" },
       { "text": "Changelog", "link": "/guide/changelog" },
       { "text": "Testing", "link": "/guide/testing" },

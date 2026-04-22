@@ -67,7 +67,6 @@ The following environment variables are optional:
 | `S3_BUCKET` | Yes | Bucket name | `images` |
 | `S3_REGION` | No | Region | `auto` |
 | `S3_FOLDER` | No | Image storage path | `images/` |
-| `WEBHOOK_URL` | No | Notification Webhook | `https://...` |
 
 ### Sensitive Configuration (Required)
 

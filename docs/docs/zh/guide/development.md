@@ -67,7 +67,6 @@ bun run dev
 | `S3_BUCKET` | 是 | 存储桶名称 | `images` |
 | `S3_REGION` | 否 | 区域 | `auto` |
 | `S3_FOLDER` | 否 | 图片存储路径 | `images/` |
-| `WEBHOOK_URL` | 否 | 通知 Webhook | `https://...` |
 
 ### 敏感配置（必须）
 

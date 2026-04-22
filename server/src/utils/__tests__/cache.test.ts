@@ -47,7 +47,6 @@ function createMockEnv(storageMode: CacheStorageMode = 'database'): Env {
         S3_ACCESS_HOST: 'https://test-image-domain.com',
         S3_BUCKET: 'test-bucket',
         S3_FORCE_PATH_STYLE: 'false',
-        WEBHOOK_URL: '',
         JWT_SECRET: 'test-jwt-secret',
         S3_ACCESS_KEY_ID: 'test-access-key',
         S3_SECRET_ACCESS_KEY: 'test-secret-key',
@@ -334,7 +333,7 @@ describe('CacheImpl - 数据库持久化测试', () => {
 
         // 设置数据
         await publicCache.set('feed_1', 'feed_data');
-        await serverConfig.set('webhook_url', 'https://example.com');
+        await serverConfig.set('friend_ua', 'Rin-Check/0.1.0');
         await clientConfig.set('site.name', 'Test Site');
 
         // 只清除公共缓存
@@ -347,9 +346,9 @@ describe('CacheImpl - 数据库持久化测试', () => {
         // 验证 server.config 未被清除
         const serverRows = await db.select().from(cache).where(eq(cache.type, 'server.config'));
         expect(serverRows).toHaveLength(1);
-        expect(serverRows[0].key).toBe('webhook_url');
+        expect(serverRows[0].key).toBe('friend_ua');
         // 字符串值直接存储，不添加引号
-        expect(serverRows[0].value).toBe('https://example.com');
+        expect(serverRows[0].value).toBe('Rin-Check/0.1.0');
 
         // 验证 client.config 未被清除
         const clientRows = await db.select().from(cache).where(eq(cache.type, 'client.config'));
@@ -362,7 +361,7 @@ describe('CacheImpl - 数据库持久化测试', () => {
         const newServerConfig = new CacheImpl(db as any, mockEnv, 'server.config', 'database');
         const newClientConfig = new CacheImpl(db as any, mockEnv, 'client.config', 'database');
 
-        expect(await newServerConfig.get('webhook_url')).toBe('https://example.com');
+        expect(await newServerConfig.get('friend_ua')).toBe('Rin-Check/0.1.0');
         expect(await newClientConfig.get('site.name')).toBe('Test Site');
     });
 

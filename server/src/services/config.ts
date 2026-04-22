@@ -1,14 +1,12 @@
 import { Hono } from "hono";
 import { wrapTime } from "hono/timing";
 import type { AppContext } from "../core/hono-types";
-import { notify } from "../utils/webhook";
 import {
     buildCombinedConfigResponse,
     buildClientConfigResponse,
     buildServerConfigResponse,
     isConfigType,
     persistRegularConfig,
-    resolveWebhookConfig,
 } from "./config-helpers";
 import { buildHealthCheckResponse } from "./config-health";
 import { profileAsync } from "../core/server-timing";
@@ -31,78 +29,6 @@ export function ConfigService(): Hono {
 
         return `globalThis.__RIN_CLIENT_CONFIG__=${serialized};`;
     }
-
-    app.post('/test-webhook', async (c: AppContext) => {
-        const admin = c.get('admin');
-
-        if (!admin) {
-            return c.json({ error: 'Unauthorized' }, 401);
-        }
-
-        const env = c.get('env');
-        const serverConfig = c.get('serverConfig');
-        const body = await wrapTime(c, 'request_body', c.req.json()) as {
-            webhook_url?: string;
-            "webhook.method"?: string;
-            "webhook.content_type"?: string;
-            "webhook.headers"?: string;
-            "webhook.body_template"?: string;
-            test_message?: string;
-        };
-
-        const {
-            webhookUrl,
-            webhookMethod: resolvedWebhookMethod,
-            webhookContentType: resolvedWebhookContentType,
-            webhookHeaders: resolvedWebhookHeaders,
-            webhookBodyTemplate: resolvedWebhookBodyTemplate,
-        } = await wrapTime(c, 'webhook_config', resolveWebhookConfig(serverConfig, env, body));
-        const frontendUrl = new URL(c.req.url).origin;
-        const testMessage = body.test_message?.trim() || "This is a test webhook message from Rin settings.";
-
-        if (!webhookUrl?.trim()) {
-            return c.json({ success: false, error: "Webhook URL is required" }, 400);
-        }
-
-        try {
-            const response = await wrapTime(c, 'webhook_send', notify(
-                    webhookUrl,
-                    {
-                        event: "webhook.test",
-                        message: testMessage,
-                        title: "Webhook Test",
-                        url: `${frontendUrl}/admin/settings`,
-                        username: "admin",
-                        content: testMessage,
-                        description: "Manual webhook test triggered from settings.",
-                    },
-                    {
-                        method: resolvedWebhookMethod,
-                        contentType: resolvedWebhookContentType,
-                        headers: resolvedWebhookHeaders,
-                        bodyTemplate: resolvedWebhookBodyTemplate,
-                    },
-                ));
-
-            if (!response) {
-                return c.json({ success: false, error: "Webhook request was not sent" }, 400);
-            }
-
-            if (!response.ok) {
-                const details = await response.text();
-                return c.json({
-                    success: false,
-                    error: `Webhook test failed with status ${response.status}`,
-                    details,
-                }, 400);
-            }
-
-            return c.json({ success: true });
-        } catch (error) {
-            const message = error instanceof Error ? error.message : String(error);
-            return c.json({ success: false, error: message }, 400);
-        }
-    });
 
     // GET /config
     app.get('/', async (c: AppContext) => {
@@ -215,7 +141,7 @@ export function ConfigService(): Hono {
         const env = c.get('env');
         
         if (type === 'server') {
-            return c.json(await buildServerConfigResponse(serverConfig, env));
+            return c.json(await buildServerConfigResponse(serverConfig));
         }
         
         return c.json(await buildClientConfigResponse(clientConfig, serverConfig, env));

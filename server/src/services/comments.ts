@@ -3,8 +3,6 @@ import type { AppContext } from "../core/hono-types";
 import { desc, eq } from "drizzle-orm";
 import { comments, feeds, users } from "../db/schema";
 import { profileAsync } from "../core/server-timing";
-import { notify } from "../utils/webhook";
-import { resolveWebhookConfig } from "./config-helpers";
 
 export function CommentService(): Hono {
     const app = new Hono();
@@ -63,35 +61,6 @@ export function CommentService(): Hono {
             content
         }));
 
-        const {
-            webhookUrl,
-            webhookMethod,
-            webhookContentType,
-            webhookHeaders,
-            webhookBodyTemplate,
-        } = await profileAsync(c, 'comment_create_webhook_config', () => resolveWebhookConfig(serverConfig, env));
-        const frontendUrl = new URL(c.req.url).origin;
-        try {
-            await profileAsync(c, 'comment_create_notify', () => notify(
-                webhookUrl || "",
-                {
-                    event: "comment.created",
-                    message: `${frontendUrl}/feed/${feedId}\n${user.username} 评论了: ${exist.title}\n${content}`,
-                    title: exist.title || "",
-                    url: `${frontendUrl}/feed/${feedId}`,
-                    username: user.username,
-                    content,
-                },
-                {
-                    method: webhookMethod,
-                    contentType: webhookContentType,
-                    headers: webhookHeaders,
-                    bodyTemplate: webhookBodyTemplate,
-                },
-            ));
-        } catch (error) {
-            console.error("Failed to send comment webhook", error);
-        }
         return c.text('OK');
     });
 

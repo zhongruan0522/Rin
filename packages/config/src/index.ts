@@ -1,5 +1,3 @@
-export const WEBHOOK_URL_KEY = "WEBHOOK_URL";
-
 export const CLIENT_CONFIG_DEFAULTS = new Map(
   Object.entries({
     "cache.enabled": false,
@@ -24,10 +22,6 @@ export const SERVER_CONFIG_DEFAULTS = new Map(
     friend_apply_auto_accept: false,
     friend_crontab: true,
     friend_ua: "Rin-Check/0.1.0",
-    "webhook.method": "POST",
-    "webhook.content_type": "application/json",
-    "webhook.headers": "{}",
-    "webhook.body_template": "{\"content\":\"{{message}}\"}",
   }),
 );
 

@@ -45,7 +45,6 @@ Rin 部署需要配置两类环境变量：**Variables（明文变量）**和**S
 | 变量名 | 必填 | 描述 | 默认值 | 推荐值 |
 |--------|------|------|--------|--------|
 | `CACHE_STORAGE_MODE` | 否 | 缓存模式：s3/database | s3 | **database** |
-| `WEBHOOK_URL` | 否 | 评论通知 Webhook | - | - |
 
 :::tip 新用户推荐
 建议将 `CACHE_STORAGE_MODE` 设为 `database`，无需额外配置 S3 缓存即可使用，降低部署复杂度。

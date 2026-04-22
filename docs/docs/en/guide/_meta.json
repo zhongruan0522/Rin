@@ -2,7 +2,6 @@
   "index",
   "deploy",
   "development",
-  "webhook",
   "migration",
   "changelog",
   "testing",

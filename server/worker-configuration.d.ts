@@ -28,7 +28,6 @@ declare namespace Cloudflare {
 		S3_ACCESS_HOST: "https://your-image-domain.com";
 		S3_BUCKET: "your-bucket-name";
 		S3_FORCE_PATH_STYLE: string;
-		WEBHOOK_URL: "";
 		ADMIN_USERNAME: string;
 		ADMIN_PASSWORD: string;
 		JWT_SECRET: string;
